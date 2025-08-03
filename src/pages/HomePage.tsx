@@ -26,26 +26,39 @@ const HomePage = () => {
     <div>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-emerald-600 text-white overflow-hidden">
-        {/* Background Image */}
-        {content.heroImage && (
+        {/* Background Media */}
+        {content.heroVideo ? (
+          <div className="absolute inset-0">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover"
+            >
+              <source src={content.heroVideo} type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-black/30"></div>
+          </div>
+        ) : content.heroImage ? (
           <div className="absolute inset-0">
             <img
               src={content.heroImage}
               alt="School Background"
               className={`w-full h-full object-cover opacity-20 ${getTransitionClass('hero')}`}
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-800/80 via-blue-700/80 to-emerald-600/80"></div>
+            <div className="absolute inset-0 bg-black/30"></div>
           </div>
-        )}
+        ) : null}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className={`text-center relative z-10 ${getTransitionClass('fadeIn')}`}>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               {content.heroTitle}
             </h1>
-            <p className="text-xl md:text-2xl mb-4 text-blue-100">
+            <p className="text-xl md:text-2xl mb-4 text-white">
               {content.heroSubtitle}
             </p>
-            <p className="text-lg mb-8 text-blue-100 max-w-3xl mx-auto">
+            <p className="text-lg mb-8 text-white max-w-3xl mx-auto">
               {content.heroDescription}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
