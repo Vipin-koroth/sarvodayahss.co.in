@@ -105,7 +105,7 @@ const ContactPage = () => {
             {/* Google Maps Placeholder */}
             <div className="mt-8">
               <h3 className="font-semibold text-gray-900 mb-4">{contactPage.locationTitle}</h3>
-              {contactPage.mapUrl ? (
+              {contactPage.mapUrl && contactPage.mapUrl.trim() !== '' ? (
                 <div className="h-64 rounded-xl overflow-hidden shadow-lg">
                   <iframe
                     src={contactPage.mapUrl}
@@ -124,6 +124,7 @@ const ContactPage = () => {
                     <MapPin className="h-12 w-12 text-gray-500 mx-auto mb-2" />
                     <p className="text-gray-600">Google Maps Integration</p>
                     <p className="text-sm text-gray-500">{contactPage.address.line2}</p>
+                    <p className="text-xs text-gray-400 mt-2">Add map URL in admin settings</p>
                   </div>
                 </div>
               )}
