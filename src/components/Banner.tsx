@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X, Info, CheckCircle, AlertTriangle, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useContent } from '../context/ContentContext';
@@ -6,23 +6,8 @@ import { useContent } from '../context/ContentContext';
 const Banner = () => {
   const { content } = useContent();
   const [isVisible, setIsVisible] = useState(true);
-  const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
 
-  // Split news items by line breaks
-  const newsItems = content.bannerMessage.split('\n').filter(item => item.trim() !== '');
-
-  // Auto-scroll through news items
-  useEffect(() => {
-    if (newsItems.length <= 1) return;
-
-    const interval = setInterval(() => {
-      setCurrentNewsIndex((prev) => (prev + 1) % newsItems.length);
-    }, 4000); // Change every 4 seconds
-
-    return () => clearInterval(interval);
-  }, [newsItems.length]);
-
-  if (!isVisible || !content.bannerEnabled || newsItems.length === 0) return null;
+  if (!isVisible || !content.bannerEnabled) return null;
 
   const getBannerStyles = () => {
     switch (content.bannerType) {
@@ -58,28 +43,9 @@ const Banner = () => {
             {getBannerIcon()}
             <div className="flex-1">
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
-                <div className="flex items-center space-x-4">
+                <div>
                   <span className="font-semibold">{content.bannerTitle}</span>
-                  <div className="relative h-6 overflow-hidden">
-                    <div 
-                      key={currentNewsIndex}
-                      className="animate-slide-up text-sm opacity-90"
-                    >
-                      {newsItems[currentNewsIndex]}
-                    </div>
-                  </div>
-                  {newsItems.length > 1 && (
-                    <div className="flex space-x-1">
-                      {newsItems.map((_, index) => (
-                        <div
-                          key={index}
-                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                            index === currentNewsIndex ? 'bg-white' : 'bg-white/40'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  )}
+                  <span className="ml-2 text-sm opacity-90">{content.bannerMessage}</span>
                 </div>
                 {content.bannerButtonText && content.bannerButtonLink && (
                   <Link
