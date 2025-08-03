@@ -39,6 +39,13 @@ interface ContentContextType {
     visionStatement: string;
     logoImage: string;
     heroImage: string;
+    heroVideo: string;
+    uploadedVideos: Array<{
+      id: string;
+      name: string;
+      url: string;
+      uploadDate: string;
+    }>;
     featuredImages: string[];
     heroTitle: string;
     heroSubtitle: string;
@@ -187,6 +194,8 @@ interface ContentContextType {
   addAdministration: (admin: Omit<ContentContextType['content']['administration'][0], 'id'>) => void;
   updateAdministration: (id: string, admin: Partial<ContentContextType['content']['administration'][0]>) => void;
   deleteAdministration: (id: string) => void;
+  uploadVideo: (file: File) => Promise<string>;
+  deleteVideo: (id: string) => void;
 }
 
 const ContentContext = createContext<ContentContextType | undefined>(undefined);
@@ -225,7 +234,8 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       promotes social justice, and empowers students to transform society through 
       knowledge, compassion, and service.`,
     heroImage: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    heroVideo: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
+    heroVideo: '',
+    uploadedVideos: [],
     heroTitle: 'Sarvodaya Higher Secondary School',
     heroSubtitle: 'Eachome, Wayanad District, Kerala',
     heroDescription: 'A Kerala Government Aided Institution managed by the Kerala Jesuit Fathers, dedicated to providing excellence in education and nurturing young minds since 1975.',
@@ -582,6 +592,40 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     }));
   };
 
+  const uploadVideo = async (file: File): Promise<string> => {
+    // Create a blob URL for the uploaded video
+    const videoUrl = URL.createObjectURL(file);
+    const videoId = Date.now().toString();
+    
+    const newVideo = {
+      id: videoId,
+      name: file.name,
+      url: videoUrl,
+      uploadDate: new Date().toLocaleDateString()
+    };
+    
+    setContent(prev => ({
+      ...prev,
+      uploadedVideos: [...prev.uploadedVideos, newVideo]
+    }));
+    
+    return videoUrl;
+  };
+
+  const deleteVideo = (id: string) => {
+    const video = content.uploadedVideos.find(v => v.id === id);
+    if (video) {
+      // Revoke the blob URL to free memory
+      URL.revokeObjectURL(video.url);
+    }
+    
+    setContent(prev => ({
+      ...prev,
+      uploadedVideos: prev.uploadedVideos.filter(video => video.id !== id),
+      // If the deleted video was being used as hero video, clear it
+      heroVideo: prev.heroVideo === video?.url ? '' : prev.heroVideo
+    }));
+  };
   return (
     <ContentContext.Provider value={{ 
       content, 
@@ -596,7 +640,9 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
      deleteGalleryItem,
      addAdministration,
      updateAdministration,
-     deleteAdministration
+     deleteAdministration,
+     uploadVideo,
+     deleteVideo
     }}>
       {children}
     </ContentContext.Provider>

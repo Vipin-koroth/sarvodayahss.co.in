@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useContent } from '../context/ContentContext';
+import { Save, Plus, Trash2, Edit, X, Eye, EyeOff, Upload, Play, Video } from 'lucide-react';
 import { 
   Settings, 
   Home, 
