@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowRight, BookOpen, Users, Award, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useContent } from '../context/ContentContext';
