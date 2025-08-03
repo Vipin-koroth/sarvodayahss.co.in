@@ -96,14 +96,14 @@ const HomePage = () => {
               {content.administrationTitle}
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 justify-items-center">
             {content.administration.map((admin, index) => (
-              <div key={admin.id} className="text-center">
+              <div key={admin.id} className="text-center flex flex-col items-center">
                 <div className="relative mb-4">
                   <img
                     src={admin.image}
                     alt={admin.name}
-                    className="w-32 h-32 rounded-full object-cover mx-auto shadow-lg border-4 border-white"
+                    className="w-32 h-32 rounded-full object-cover shadow-lg border-4 border-white"
                   />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">{admin.name}</h3>

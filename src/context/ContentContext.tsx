@@ -222,7 +222,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     heroTitle: 'Sarvodaya Higher Secondary School',
     heroSubtitle: 'Eachome, Wayanad District, Kerala',
     heroDescription: 'A Kerala Government Aided Institution managed by the Kerala Jesuit Fathers, dedicated to providing excellence in education and nurturing young minds since 1975.',
-    administrationTitle: 'Our Administration',
+    administrationTitle: 'Administration',
     exploreSectionTitle: 'Explore Our School',
     welcomeSectionTitle: 'Welcome to Sarvodaya Family',
     featuredImages: [
