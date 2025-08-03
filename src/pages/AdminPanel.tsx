@@ -114,7 +114,7 @@ const AdminPanel = () => {
     { key: 'events-page', label: 'Events Page', icon: Calendar },
     { key: 'gallery-page', label: 'Gallery Page', icon: ImageIcon },
     { key: 'contact', label: 'Contact Page', icon: Phone },
-    { key: 'teachers', label: 'Manage Teachers', icon: Users },
+    { key: 'teachers', label: 'Manage Staff', icon: Users },
     { key: 'events', label: 'Manage Events', icon: Calendar },
     { key: 'gallery', label: 'Manage Gallery', icon: ImageIcon },
     { key: 'settings', label: 'Settings', icon: Settings },
@@ -294,7 +294,7 @@ const AdminPanel = () => {
               input.type = 'file';
               input.accept = 'image/*';
               input.onchange = (e) => {
-            Manage Staff
+                const file = (e.target as HTMLInputElement).files?.[0];
                 if (file) {
                   const reader = new FileReader();
                   reader.onload = (e) => {
