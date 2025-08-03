@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, GraduationCap } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 const Navbar = () => {
+  const { content } = useContent();
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
@@ -25,7 +27,15 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3">
-              <GraduationCap className="h-8 w-8 text-blue-800" />
+              {content.logoImage ? (
+                <img 
+                  src={content.logoImage} 
+                  alt="Sarvodaya HSS Logo" 
+                  className="h-10 w-10 rounded-full object-cover border-2 border-blue-800"
+                />
+              ) : (
+                <GraduationCap className="h-8 w-8 text-blue-800" />
+              )}
               <div className="flex flex-col">
                 <span className="text-xl font-bold text-blue-800">Sarvodaya HSS</span>
                 <span className="text-xs text-gray-600 hidden sm:block">Eachome, Wayanad</span>
