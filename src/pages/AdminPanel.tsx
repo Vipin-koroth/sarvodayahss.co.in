@@ -1807,6 +1807,24 @@ const AdminPanel = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Location Map URL (Google Maps Embed)
+                  </label>
+                  <input
+                    type="url"
+                    value={content.contactPage.mapUrl}
+                    onChange={(e) => updateContent({
+                      contactPage: { ...content.contactPage, mapUrl: e.target.value }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://www.google.com/maps/embed?pb=..."
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Get embed URL from Google Maps → Share → Embed a map → Copy HTML (src attribute)
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Welcome Message
                   </label>
                   <textarea

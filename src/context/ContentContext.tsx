@@ -460,6 +460,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       contactInfoTitle: 'Get in Touch',
       contactFormTitle: 'Send us a Message',
       locationTitle: 'Location',
+      mapUrl: '',
       address: {
         line1: 'Sarvodaya Higher Secondary School',
         line2: 'Eachome, Wayanad District',
