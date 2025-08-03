@@ -30,13 +30,6 @@ const AboutPage = () => {
                 ))}
               </div>
             </div>
-                <p>
-                  Our journey has been marked by consistent academic excellence, innovative 
-                  teaching methodologies, and a commitment to holistic development that extends 
-                  beyond textbooks to character formation and spiritual growth.
-                </p>
-              </div>
-            </div>
             <div className="bg-gradient-to-br from-blue-50 to-emerald-50 p-8 rounded-xl">
               <div className="text-center">
                 <div className="text-4xl font-bold text-blue-800 mb-2">{aboutPage.establishedYear}</div>
