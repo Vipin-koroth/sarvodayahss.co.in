@@ -1,11 +1,24 @@
 import React, { useState } from 'react';
 import { Lock, User, Eye, EyeOff, LogIn, Settings, FileText, Users, Calendar, Image } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 const AdminPanel = () => {
+  const { content, updateContent } = useContent();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [activeSection, setActiveSection] = useState('dashboard');
+  const [editingContent, setEditingContent] = useState({
+    welcomeMessage: content.welcomeMessage,
+    missionStatement: content.missionStatement,
+    visionStatement: content.visionStatement,
+    schoolStats: { ...content.schoolStats }
+  });
+
+  const handleContentSave = () => {
+    updateContent(editingContent);
+    alert('Content updated successfully! Changes are now live on the website.');
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +34,13 @@ const AdminPanel = () => {
     setIsLoggedIn(false);
     setLoginData({ username: '', password: '' });
     setActiveSection('dashboard');
+    // Reset editing content when logging out
+    setEditingContent({
+      welcomeMessage: content.welcomeMessage,
+      missionStatement: content.missionStatement,
+      visionStatement: content.visionStatement,
+      schoolStats: { ...content.schoolStats }
+    });
   };
 
   if (!isLoggedIn) {
@@ -190,21 +210,124 @@ const AdminPanel = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-2">Welcome Message</label>
                       <textarea
                         rows={4}
+                        value={editingContent.welcomeMessage}
+                        onChange={(e) => setEditingContent({
+                          ...editingContent,
+                          welcomeMessage: e.target.value
+                        })}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter homepage welcome message..."
-                      ></textarea>
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Mission Statement</label>
                       <textarea
                         rows={3}
+                        value={editingContent.missionStatement}
+                        onChange={(e) => setEditingContent({
+                          ...editingContent,
+                          missionStatement: e.target.value
+                        })}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter mission statement..."
-                      ></textarea>
+                      />
                     </div>
-                    <button className="bg-blue-800 hover:bg-blue-900 text-white px-6 py-3 rounded-lg font-semibold">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Vision Statement</label>
+                      <textarea
+                        rows={3}
+                        value={editingContent.visionStatement}
+                        onChange={(e) => setEditingContent({
+                          ...editingContent,
+                          visionStatement: e.target.value
+                        })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter vision statement..."
+                      />
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Years of Excellence</label>
+                        <input
+                          type="number"
+                          value={editingContent.schoolStats.yearsOfExcellence}
+                          onChange={(e) => setEditingContent({
+                            ...editingContent,
+                            schoolStats: {
+                              ...editingContent.schoolStats,
+                              yearsOfExcellence: parseInt(e.target.value) || 0
+                            }
+                          })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Total Students</label>
+                        <input
+                          type="number"
+                          value={editingContent.schoolStats.totalStudents}
+                          onChange={(e) => setEditingContent({
+                            ...editingContent,
+                            schoolStats: {
+                              ...editingContent.schoolStats,
+                              totalStudents: parseInt(e.target.value) || 0
+                            }
+                          })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Qualified Teachers</label>
+                        <input
+                          type="number"
+                          value={editingContent.schoolStats.qualifiedTeachers}
+                          onChange={(e) => setEditingContent({
+                            ...editingContent,
+                            schoolStats: {
+                              ...editingContent.schoolStats,
+                              qualifiedTeachers: parseInt(e.target.value) || 0
+                            }
+                          })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Annual Events</label>
+                        <input
+                          type="number"
+                          value={editingContent.schoolStats.annualEvents}
+                          onChange={(e) => setEditingContent({
+                            ...editingContent,
+                            schoolStats: {
+                              ...editingContent.schoolStats,
+                              annualEvents: parseInt(e.target.value) || 0
+                            }
+                          })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="flex space-x-4">
+                      <button 
+                        onClick={handleContentSave}
+                        className="bg-blue-800 hover:bg-blue-900 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
+                      >
                       Update Content
-                    </button>
+                      </button>
+                      <button 
+                        onClick={() => setEditingContent({
+                          welcomeMessage: content.welcomeMessage,
+                          missionStatement: content.missionStatement,
+                          visionStatement: content.visionStatement,
+                          schoolStats: { ...content.schoolStats }
+                        })}
+                        className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
+                      >
+                        Reset Changes
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}

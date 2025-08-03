@@ -1,8 +1,11 @@
 import React from 'react';
 import { ArrowRight, BookOpen, Users, Award, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useContent } from '../context/ContentContext';
 
 const HomePage = () => {
+  const { content } = useContent();
+
   return (
     <div>
       {/* Hero Section */}
@@ -48,19 +51,11 @@ const HomePage = () => {
             <div className="grid md:grid-cols-2 gap-8">
               <div className="bg-blue-50 p-8 rounded-xl">
                 <h3 className="text-2xl font-bold text-blue-800 mb-4">Mission</h3>
-                <p className="text-gray-700 leading-relaxed">
-                  To provide quality education rooted in Jesuit values, fostering intellectual, 
-                  moral, and spiritual development of students while preparing them to be 
-                  responsible citizens and leaders of tomorrow.
-                </p>
+                <p className="text-gray-700 leading-relaxed">{content.missionStatement}</p>
               </div>
               <div className="bg-emerald-50 p-8 rounded-xl">
                 <h3 className="text-2xl font-bold text-emerald-800 mb-4">Vision</h3>
-                <p className="text-gray-700 leading-relaxed">
-                  To be a center of educational excellence that nurtures holistic development, 
-                  promotes social justice, and empowers students to transform society through 
-                  knowledge, compassion, and service.
-                </p>
+                <p className="text-gray-700 leading-relaxed">{content.visionStatement}</p>
               </div>
             </div>
           </div>
@@ -75,28 +70,28 @@ const HomePage = () => {
               <div className="bg-blue-800 text-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="h-8 w-8" />
               </div>
-              <h3 className="text-3xl font-bold text-gray-900">50+</h3>
+              <h3 className="text-3xl font-bold text-gray-900">{content.schoolStats.yearsOfExcellence}+</h3>
               <p className="text-gray-600">Years of Excellence</p>
             </div>
             <div className="text-center">
               <div className="bg-emerald-600 text-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <Users className="h-8 w-8" />
               </div>
-              <h3 className="text-3xl font-bold text-gray-900">1200+</h3>
+              <h3 className="text-3xl font-bold text-gray-900">{content.schoolStats.totalStudents}+</h3>
               <p className="text-gray-600">Students</p>
             </div>
             <div className="text-center">
               <div className="bg-yellow-600 text-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <Award className="h-8 w-8" />
               </div>
-              <h3 className="text-3xl font-bold text-gray-900">45+</h3>
+              <h3 className="text-3xl font-bold text-gray-900">{content.schoolStats.qualifiedTeachers}+</h3>
               <p className="text-gray-600">Qualified Teachers</p>
             </div>
             <div className="text-center">
               <div className="bg-purple-600 text-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <Calendar className="h-8 w-8" />
               </div>
-              <h3 className="text-3xl font-bold text-gray-900">100+</h3>
+              <h3 className="text-3xl font-bold text-gray-900">{content.schoolStats.annualEvents}+</h3>
               <p className="text-gray-600">Annual Events</p>
             </div>
           </div>
@@ -160,11 +155,7 @@ const HomePage = () => {
               Welcome to Sarvodaya Family
             </h2>
             <p className="text-lg text-gray-700 max-w-4xl mx-auto leading-relaxed">
-              At Sarvodaya Higher Secondary School, we believe in the transformative power of education. 
-              Under the guidance of the Kerala Jesuit Fathers, we have been nurturing young minds for 
-              over five decades, providing not just academic excellence but also character formation 
-              and spiritual growth. Our commitment to the Jesuit tradition of "men and women for others" 
-              shapes every aspect of our educational approach.
+              {content.welcomeMessage}
             </p>
           </div>
         </div>
