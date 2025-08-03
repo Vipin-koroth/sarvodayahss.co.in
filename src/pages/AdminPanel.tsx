@@ -294,7 +294,7 @@ const AdminPanel = () => {
               input.type = 'file';
               input.accept = 'image/*';
               input.onchange = (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0];
+            Manage Staff
                 if (file) {
                   const reader = new FileReader();
                   reader.onload = (e) => {
