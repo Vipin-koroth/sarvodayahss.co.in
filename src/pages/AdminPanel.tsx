@@ -1807,7 +1807,7 @@ const AdminPanel = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Location Map URL (Google Maps Embed)
+                    Google Maps Embed URL
                   </label>
                   <input
                     type="url"
@@ -1816,10 +1816,10 @@ const AdminPanel = () => {
                       contactPage: { ...content.contactPage, mapUrl: e.target.value }
                     })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://www.google.com/maps/embed?pb=..."
+                    placeholder="Paste Google Maps embed URL here"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Get embed URL from Google Maps → Share → Embed a map → Copy HTML (src attribute)
+                    Get embed URL: Google Maps → Share → Embed a map → Copy HTML → Extract src URL
                   </p>
                 </div>
 
