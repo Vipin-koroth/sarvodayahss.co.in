@@ -21,11 +21,6 @@ const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState('homepage');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [newAdmin, setNewAdmin] = useState({
-    name: '',
-    designation: '',
-    image: ''
-  });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -178,6 +173,16 @@ const AdminPanel = () => {
             {content.heroImage && (
               <img src={content.heroImage} alt="Hero" className="mt-2 h-32 w-full object-cover rounded" />
             )}
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Administration Section Title</label>
+            <input
+              type="text"
+              value={content.administrationTitle}
+              onChange={(e) => updateContent({ administrationTitle: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
       </div>
