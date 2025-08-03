@@ -5,6 +5,13 @@ interface ContentContextType {
     welcomeMessage: string;
     missionStatement: string;
     visionStatement: string;
+    heroImage: string;
+    featuredImages: string[];
+    transitionSettings: {
+      heroTransition: string;
+      cardTransitions: boolean;
+      fadeInDuration: number;
+    };
     schoolStats: {
       yearsOfExcellence: number;
       totalStudents: number;
@@ -42,6 +49,17 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     visionStatement: `To be a center of educational excellence that nurtures holistic development, 
       promotes social justice, and empowers students to transform society through 
       knowledge, compassion, and service.`,
+    heroImage: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    featuredImages: [
+      'https://images.pexels.com/photos/8926991/pexels-photo-8926991.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/5427674/pexels-photo-5427674.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=800'
+    ],
+    transitionSettings: {
+      heroTransition: 'fade',
+      cardTransitions: true,
+      fadeInDuration: 800
+    },
     schoolStats: {
       yearsOfExcellence: 50,
       totalStudents: 1200,

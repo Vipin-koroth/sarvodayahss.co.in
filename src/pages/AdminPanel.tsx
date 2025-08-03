@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock, User, Eye, EyeOff, LogIn, Settings, FileText, Users, Calendar, Image } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, LogIn, Settings, FileText, Users, Calendar, Image, Upload, X, Plus } from 'lucide-react';
 import { useContent } from '../context/ContentContext';
 
 const AdminPanel = () => {
@@ -12,6 +12,9 @@ const AdminPanel = () => {
     welcomeMessage: content.welcomeMessage,
     missionStatement: content.missionStatement,
     visionStatement: content.visionStatement,
+    heroImage: content.heroImage,
+    featuredImages: [...content.featuredImages],
+    transitionSettings: { ...content.transitionSettings },
     schoolStats: { ...content.schoolStats }
   });
 
@@ -20,6 +23,51 @@ const AdminPanel = () => {
     alert('Content updated successfully! Changes are now live on the website.');
   };
 
+  const handleImageUpload = (type: 'hero' | 'featured', index?: number) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // In a real application, you would upload to a service like Cloudinary
+        // For demo purposes, we'll use a placeholder URL
+        const imageUrl = `https://images.pexels.com/photos/${Math.floor(Math.random() * 9000000) + 1000000}/pexels-photo-${Math.floor(Math.random() * 9000000) + 1000000}.jpeg?auto=compress&cs=tinysrgb&w=800`;
+        
+        if (type === 'hero') {
+          setEditingContent({
+            ...editingContent,
+            heroImage: imageUrl
+          });
+        } else if (type === 'featured' && typeof index === 'number') {
+          const newFeaturedImages = [...editingContent.featuredImages];
+          newFeaturedImages[index] = imageUrl;
+          setEditingContent({
+            ...editingContent,
+            featuredImages: newFeaturedImages
+          });
+        }
+        alert(`Image uploaded successfully! (Demo: Using placeholder image)`);
+      }
+    };
+    input.click();
+  };
+
+  const addFeaturedImage = () => {
+    const newImage = `https://images.pexels.com/photos/${Math.floor(Math.random() * 9000000) + 1000000}/pexels-photo-${Math.floor(Math.random() * 9000000) + 1000000}.jpeg?auto=compress&cs=tinysrgb&w=800`;
+    setEditingContent({
+      ...editingContent,
+      featuredImages: [...editingContent.featuredImages, newImage]
+    });
+  };
+
+  const removeFeaturedImage = (index: number) => {
+    const newFeaturedImages = editingContent.featuredImages.filter((_, i) => i !== index);
+    setEditingContent({
+      ...editingContent,
+      featuredImages: newFeaturedImages
+    });
+  };
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // Simple demo authentication - in production, this should be secure

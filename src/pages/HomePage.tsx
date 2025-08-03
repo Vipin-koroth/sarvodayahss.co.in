@@ -6,12 +6,40 @@ import { useContent } from '../context/ContentContext';
 const HomePage = () => {
   const { content } = useContent();
 
+  const getTransitionClass = (type: string) => {
+    if (!content.transitionSettings.cardTransitions) return '';
+    
+    const duration = content.transitionSettings.fadeInDuration;
+    switch (type) {
+      case 'hero':
+        return content.transitionSettings.heroTransition === 'slide' 
+          ? `transform transition-all duration-${duration} ease-in-out hover:scale-105`
+          : `transition-opacity duration-${duration} ease-in-out`;
+      case 'card':
+        return `transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`;
+      case 'fadeIn':
+        return `animate-fade-in`;
+      default:
+        return '';
+    }
+  };
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-800 via-blue-700 to-emerald-600 text-white">
+      <section className="relative bg-gradient-to-br from-blue-800 via-blue-700 to-emerald-600 text-white overflow-hidden">
+        {/* Background Image */}
+        {content.heroImage && (
+          <div className="absolute inset-0">
+            <img
+              src={content.heroImage}
+              alt="School Background"
+              className={`w-full h-full object-cover opacity-20 ${getTransitionClass('hero')}`}
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-800/80 via-blue-700/80 to-emerald-600/80"></div>
+          </div>
+        )}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center">
+          <div className={`text-center relative z-10 ${getTransitionClass('fadeIn')}`}>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Sarvodaya Higher Secondary School
             </h1>
@@ -104,9 +132,26 @@ const HomePage = () => {
           <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
             Explore Our School
           </h2>
+          
+          {/* Featured Images */}
+          {content.featuredImages.length > 0 && (
+            <div className="grid md:grid-cols-3 gap-6 mb-12">
+              {content.featuredImages.map((image, index) => (
+                <div key={index} className={`relative rounded-xl overflow-hidden shadow-lg ${getTransitionClass('card')}`}>
+                  <img
+                    src={image}
+                    alt={`Featured ${index + 1}`}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                </div>
+              ))}
+            </div>
+          )}
+          
           <div className="grid md:grid-cols-3 gap-8">
             <Link to="/academics" className="group">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+              <div className={`bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl hover:shadow-xl ${getTransitionClass('card')}`}>
                 <BookOpen className="h-12 w-12 text-blue-800 mb-4" />
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Academic Programs</h3>
                 <p className="text-gray-700 mb-4">
@@ -119,7 +164,7 @@ const HomePage = () => {
             </Link>
 
             <Link to="/teachers" className="group">
-              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 rounded-xl hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+              <div className={`bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 rounded-xl hover:shadow-xl ${getTransitionClass('card')}`}>
                 <Users className="h-12 w-12 text-emerald-800 mb-4" />
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Our Faculty</h3>
                 <p className="text-gray-700 mb-4">
@@ -132,7 +177,7 @@ const HomePage = () => {
             </Link>
 
             <Link to="/events" className="group">
-              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-8 rounded-xl hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+              <div className={`bg-gradient-to-br from-yellow-50 to-yellow-100 p-8 rounded-xl hover:shadow-xl ${getTransitionClass('card')}`}>
                 <Calendar className="h-12 w-12 text-yellow-800 mb-4" />
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Events & Activities</h3>
                 <p className="text-gray-700 mb-4">
