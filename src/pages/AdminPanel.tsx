@@ -5,7 +5,6 @@ import {
   Home, 
   Info, 
   BookOpen, 
-  Users, 
   Calendar, 
   Image as ImageIcon, 
   Phone,
