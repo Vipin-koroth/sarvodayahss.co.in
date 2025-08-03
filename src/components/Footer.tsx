@@ -56,7 +56,7 @@ const Footer = () => {
                 Academic Programs
               </Link>
               <Link to="/teachers" className="block text-gray-300 hover:text-emerald-400 transition-colors duration-200">
-                Our Teachers
+                Our Staff
               </Link>
               <Link to="/events" className="block text-gray-300 hover:text-emerald-400 transition-colors duration-200">
                 Events & News

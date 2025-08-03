@@ -169,12 +169,12 @@ const HomePage = () => {
             <Link to="/teachers" className="group">
               <div className={`bg-gradient-to-br from-emerald-50 to-emerald-100 p-8 rounded-xl hover:shadow-xl ${getTransitionClass('card')}`}>
                 <Users className="h-12 w-12 text-emerald-800 mb-4" />
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Our Faculty</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Our Staff</h3>
                 <p className="text-gray-700 mb-4">
                   Meet our dedicated team of qualified and experienced educators.
                 </p>
                 <span className="text-emerald-800 font-semibold flex items-center">
-                  Meet Our Teachers <ArrowRight className="h-4 w-4 ml-2" />
+                  Meet Our Staff <ArrowRight className="h-4 w-4 ml-2" />
                 </span>
               </div>
             </Link>
