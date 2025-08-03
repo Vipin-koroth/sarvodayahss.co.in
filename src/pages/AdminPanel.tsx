@@ -87,6 +87,9 @@ const AdminPanel = () => {
       welcomeMessage: content.welcomeMessage,
       missionStatement: content.missionStatement,
       visionStatement: content.visionStatement,
+      heroImage: content.heroImage,
+      featuredImages: [...content.featuredImages],
+      transitionSettings: { ...content.transitionSettings },
       schoolStats: { ...content.schoolStats }
     });
   };
@@ -369,6 +372,9 @@ const AdminPanel = () => {
                           welcomeMessage: content.welcomeMessage,
                           missionStatement: content.missionStatement,
                           visionStatement: content.visionStatement,
+                          heroImage: content.heroImage,
+                          featuredImages: [...content.featuredImages],
+                          transitionSettings: { ...content.transitionSettings },
                           schoolStats: { ...content.schoolStats }
                         })}
                         className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
