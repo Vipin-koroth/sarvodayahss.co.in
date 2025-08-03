@@ -35,6 +35,16 @@ const ContactPage = () => {
         {/* Page Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{contactPage.pageTitle}</h1>
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/Sravodaya_Small.png" 
+              alt="Sarvodaya HSS Logo" 
+              className="h-16 w-16 object-contain"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             {contactPage.pageSubtitle}
           </p>

@@ -39,6 +39,16 @@ const HomePage = () => {
         )}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className={`text-center relative z-10 ${getTransitionClass('fadeIn')}`}>
+            <div className="flex justify-center mb-6">
+              <img 
+                src="/Sravodaya_Small.png" 
+                alt="Sarvodaya HSS Logo" 
+                className="h-20 w-20 object-contain bg-white/10 rounded-full p-2"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               {content.heroTitle}
             </h1>

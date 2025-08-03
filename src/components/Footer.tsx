@@ -10,7 +10,16 @@ const Footer = () => {
           {/* School Info */}
           <div>
             <div className="flex items-center space-x-3 mb-4">
-              <GraduationCap className="h-8 w-8 text-emerald-400" />
+              <img 
+                src="/Sravodaya_Small.png" 
+                alt="Sarvodaya HSS Logo" 
+                className="h-10 w-10 object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling.style.display = 'block';
+                }}
+              />
+              <GraduationCap className="h-8 w-8 text-emerald-400 hidden" />
               <div>
                 <h3 className="text-xl font-bold">Sarvodaya HSS</h3>
                 <p className="text-sm text-gray-300">Excellence in Education</p>

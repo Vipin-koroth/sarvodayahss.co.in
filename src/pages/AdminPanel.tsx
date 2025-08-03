@@ -1268,6 +1268,16 @@ const AdminPanel = () => {
         {/* Sidebar */}
         <div className="w-64 bg-white shadow-lg min-h-screen">
           <div className="p-6">
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/Sravodaya_Small.png" 
+                alt="Sarvodaya HSS Logo" 
+                className="h-12 w-12 object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
             <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
             <p className="text-sm text-gray-600">Content Management</p>
           </div>

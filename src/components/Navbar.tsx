@@ -25,7 +25,16 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3">
-              <GraduationCap className="h-8 w-8 text-blue-800" />
+              <img 
+                src="/Sravodaya_Small.png" 
+                alt="Sarvodaya HSS Logo" 
+                className="h-10 w-10 object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling.style.display = 'block';
+                }}
+              />
+              <GraduationCap className="h-8 w-8 text-blue-800 hidden" />
               <div className="flex flex-col">
                 <span className="text-xl font-bold text-blue-800">Sarvodaya HSS</span>
                 <span className="text-xs text-gray-600 hidden sm:block">Eachome, Wayanad</span>
