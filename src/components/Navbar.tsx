@@ -31,7 +31,7 @@ const Navbar = () => {
                 <img 
                   src={content.logoImage} 
                   alt="Sarvodaya HSS Logo" 
-                  className="h-10 w-10 rounded-full object-cover border-2 border-blue-800"
+                  className="h-10 w-10 rounded-full object-cover"
                 />
               ) : (
                 <GraduationCap className="h-8 w-8 text-blue-800" />
