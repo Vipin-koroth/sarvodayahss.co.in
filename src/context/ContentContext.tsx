@@ -213,9 +213,9 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       shapes every aspect of our educational approach.`,
     logoImage: '/Sravodaya_Small.png',
     bannerEnabled: true,
-    bannerTitle: 'Welcome to Sarvodaya HSS',
-    bannerMessage: 'Admissions Open for Academic Year 2025-26',
-    bannerButtonText: 'Apply Now',
+    bannerTitle: 'Latest News',
+    bannerMessage: 'Admissions Open for Academic Year 2025-26 | Annual Sports Day on March 28th',
+    bannerButtonText: 'Read More',
     bannerButtonLink: '/contact',
     bannerType: 'info', // info, success, warning, error
     missionStatement: `To provide quality education rooted in Jesuit values, fostering intellectual, 
