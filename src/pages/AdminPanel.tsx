@@ -114,6 +114,7 @@ const AdminPanel = () => {
     { key: 'events-page', label: 'Events Page', icon: Calendar },
     { key: 'gallery-page', label: 'Gallery Page', icon: ImageIcon },
     { key: 'contact', label: 'Contact Page', icon: Phone },
+    { key: 'administration', label: 'Manage Administration', icon: Users },
     { key: 'teachers', label: 'Manage Staff', icon: Users },
     { key: 'events', label: 'Manage Events', icon: Calendar },
     { key: 'gallery', label: 'Manage Gallery', icon: ImageIcon },
