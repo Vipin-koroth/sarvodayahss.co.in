@@ -88,43 +88,28 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Quick Stats */}
+      {/* Administration */}
       <section className="py-16 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              {content.quickStatsTitle}
+              {content.administrationTitle}
             </h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="bg-blue-800 text-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="h-8 w-8" />
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 justify-center">
+            {content.administration.map((admin, index) => (
+              <div key={admin.id} className="text-center">
+                <div className="relative mb-4">
+                  <img
+                    src={admin.image}
+                    alt={admin.name}
+                    className="w-32 h-32 rounded-full object-cover mx-auto shadow-lg border-4 border-white"
+                  />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">{admin.name}</h3>
+                <p className="text-blue-800 font-semibold text-sm">{admin.designation}</p>
               </div>
-              <h3 className="text-3xl font-bold text-gray-900">{content.schoolStats.yearsOfExcellence}+</h3>
-              <p className="text-gray-600">Years of Excellence</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-emerald-600 text-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8" />
-              </div>
-              <h3 className="text-3xl font-bold text-gray-900">{content.schoolStats.totalStudents}+</h3>
-              <p className="text-gray-600">Students</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-yellow-600 text-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Award className="h-8 w-8" />
-              </div>
-              <h3 className="text-3xl font-bold text-gray-900">{content.schoolStats.qualifiedTeachers}+</h3>
-              <p className="text-gray-600">Qualified Teachers</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-purple-600 text-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Calendar className="h-8 w-8" />
-              </div>
-              <h3 className="text-3xl font-bold text-gray-900">{content.schoolStats.annualEvents}+</h3>
-              <p className="text-gray-600">Annual Events</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>

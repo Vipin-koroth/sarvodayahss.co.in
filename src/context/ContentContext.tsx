@@ -46,6 +46,8 @@ interface ContentContextType {
     quickStatsTitle: string;
     exploreSectionTitle: string;
     welcomeSectionTitle: string;
+    administrationTitle: string;
+    administrationTitle: string;
     transitionSettings: {
       heroTransition: string;
       cardTransitions: boolean;
@@ -57,6 +59,12 @@ interface ContentContextType {
       qualifiedTeachers: number;
       annualEvents: number;
     };
+    administration: Array<{
+      id: string;
+      name: string;
+      designation: string;
+      image: string;
+    }>;
     
     // About Page Content
     aboutPage: {
@@ -176,6 +184,9 @@ interface ContentContextType {
   deleteEvent: (id: string) => void;
   addGalleryItem: (item: Omit<GalleryItem, 'id'>) => void;
   deleteGalleryItem: (id: string) => void;
+  addAdministration: (admin: Omit<ContentContextType['content']['administration'][0], 'id'>) => void;
+  updateAdministration: (id: string, admin: Partial<ContentContextType['content']['administration'][0]>) => void;
+  deleteAdministration: (id: string) => void;
 }
 
 const ContentContext = createContext<ContentContextType | undefined>(undefined);
@@ -211,7 +222,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     heroTitle: 'Sarvodaya Higher Secondary School',
     heroSubtitle: 'Eachome, Wayanad District, Kerala',
     heroDescription: 'A Kerala Government Aided Institution managed by the Kerala Jesuit Fathers, dedicated to providing excellence in education and nurturing young minds since 1975.',
-    quickStatsTitle: 'Our Achievements',
+    administrationTitle: 'Our Administration',
     exploreSectionTitle: 'Explore Our School',
     welcomeSectionTitle: 'Welcome to Sarvodaya Family',
     featuredImages: [
@@ -230,6 +241,26 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       qualifiedTeachers: 45,
       annualEvents: 100
     },
+    administration: [
+      {
+        id: '1',
+        name: 'Rev. Fr. Thomas Abraham',
+        designation: 'Principal',
+        image: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=400'
+      },
+      {
+        id: '2',
+        name: 'Mrs. Priya Nair',
+        designation: 'Vice Principal',
+        image: 'https://images.pexels.com/photos/3823495/pexels-photo-3823495.jpeg?auto=compress&cs=tinysrgb&w=400'
+      },
+      {
+        id: '3',
+        name: 'Mr. Rajesh Kumar',
+        designation: 'Head Master',
+        image: 'https://images.pexels.com/photos/5212317/pexels-photo-5212317.jpeg?auto=compress&cs=tinysrgb&w=400'
+      }
+    ],
     
     // About Page Content
     aboutPage: {
@@ -511,6 +542,38 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     }));
   };
 
+  const addAdministration = (admin: Omit<ContentContextType['content']['administration'][0], 'id'>) => {
+    if (content.administration.length >= 5) {
+      alert('Maximum 5 administration members allowed');
+      return;
+    }
+    const newAdmin = { ...admin, id: Date.now().toString() };
+    setContent(prev => ({
+      ...prev,
+      administration: [...prev.administration, newAdmin]
+    }));
+  };
+
+  const updateAdministration = (id: string, updatedAdmin: Partial<ContentContextType['content']['administration'][0]>) => {
+    setContent(prev => ({
+      ...prev,
+      administration: prev.administration.map(admin => 
+        admin.id === id ? { ...admin, ...updatedAdmin } : admin
+      )
+    }));
+  };
+
+  const deleteAdministration = (id: string) => {
+    if (content.administration.length <= 3) {
+      alert('Minimum 3 administration members required');
+      return;
+    }
+    setContent(prev => ({
+      ...prev,
+      administration: prev.administration.filter(admin => admin.id !== id)
+    }));
+  };
+
   return (
     <ContentContext.Provider value={{ 
       content, 
@@ -522,7 +585,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       updateEvent,
       deleteEvent,
       addGalleryItem,
-      deleteGalleryItem
+     deleteGalleryItem,
+     addAdministration,
+     updateAdministration,
+     deleteAdministration
     }}>
       {children}
     </ContentContext.Provider>
