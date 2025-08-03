@@ -17,10 +17,55 @@ import {
 } from 'lucide-react';
 
 const AdminPanel = () => {
-  const { content, updateContent, addTeacher, updateTeacher, deleteTeacher, addEvent, updateEvent, deleteEvent, addGalleryItem, deleteGalleryItem } = useContent();
+  const { 
+    content, 
+    updateContent, 
+    addTeacher, 
+    updateTeacher, 
+    deleteTeacher,
+    addEvent,
+    updateEvent,
+    deleteEvent,
+    addGalleryItem,
+    deleteGalleryItem,
+    addAdministration,
+    updateAdministration,
+    deleteAdministration
+  } = useContent();
+  
   const [activeSection, setActiveSection] = useState('homepage');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [newTeacher, setNewTeacher] = useState({
+    name: '',
+    designation: '',
+    subjects: '',
+    experience: '',
+    education: '',
+    image: ''
+  });
+  const [newEvent, setNewEvent] = useState({
+    title: '',
+    date: '',
+    time: '',
+    location: '',
+    description: '',
+    image: '',
+    category: 'Academic',
+    isUpcoming: true
+  });
+  const [newGalleryItem, setNewGalleryItem] = useState({
+    type: 'image' as const,
+    src: '',
+    thumbnail: '',
+    title: '',
+    category: 'academic'
+  });
+  const [newAdmin, setNewAdmin] = useState({
+    name: '',
+    designation: '',
+    image: ''
+  });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +111,46 @@ const AdminPanel = () => {
     const currentArray = (content[section as keyof typeof content] as any)[field];
     const newArray = currentArray.filter((_: any, i: number) => i !== index);
     handleNestedUpdate(section, field, newArray);
+  };
+
+  const handleTeacherSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const subjects = newTeacher.subjects.split(',').map(s => s.trim());
+    addTeacher({ ...newTeacher, subjects });
+    setNewTeacher({ name: '', designation: '', subjects: '', experience: '', education: '', image: '' });
+  };
+
+  const handleEventSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addEvent(newEvent);
+    setNewEvent({
+      title: '',
+      date: '',
+      time: '',
+      location: '',
+      description: '',
+      image: '',
+      category: 'Academic',
+      isUpcoming: true
+    });
+  };
+
+  const handleGallerySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addGalleryItem(newGalleryItem);
+    setNewGalleryItem({
+      type: 'image' as const,
+      src: '',
+      thumbnail: '',
+      title: '',
+      category: 'academic'
+    });
+  };
+
+  const handleAdminSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addAdministration(newAdmin);
+    setNewAdmin({ name: '', designation: '', image: '' });
   };
 
   if (!isAuthenticated) {
@@ -1267,6 +1352,567 @@ const AdminPanel = () => {
         return renderGalleryPageEditor();
       case 'contact':
         return renderContactPageEditor();
+      case 'teachers':
+        return (
+          <div className="space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900">Manage Staff</h2>
+            
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">Staff Page Content</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
+                  <input
+                    type="text"
+                    value={content.teachersPage.pageTitle}
+                    onChange={(e) => updateContent({ 
+                      teachersPage: { ...content.teachersPage, pageTitle: e.target.value }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
+                  <textarea
+                    value={content.teachersPage.pageSubtitle}
+                    onChange={(e) => updateContent({ 
+                      teachersPage: { ...content.teachersPage, pageSubtitle: e.target.value }
+                    })}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">Add New Staff Member</h3>
+              <form onSubmit={handleTeacherSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Staff Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={newTeacher.name}
+                      onChange={(e) => setNewTeacher({ ...newTeacher, name: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Designation</label>
+                    <input
+                      type="text"
+                      required
+                      value={newTeacher.designation}
+                      onChange={(e) => setNewTeacher({ ...newTeacher, designation: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Subjects (comma-separated)</label>
+                    <input
+                      type="text"
+                      required
+                      value={newTeacher.subjects}
+                      onChange={(e) => setNewTeacher({ ...newTeacher, subjects: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Experience</label>
+                    <input
+                      type="text"
+                      required
+                      value={newTeacher.experience}
+                      onChange={(e) => setNewTeacher({ ...newTeacher, experience: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Education</label>
+                    <input
+                      type="text"
+                      required
+                      value={newTeacher.education}
+                      onChange={(e) => setNewTeacher({ ...newTeacher, education: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Staff Photo URL</label>
+                    <input
+                      type="url"
+                      required
+                      value={newTeacher.image}
+                      onChange={(e) => setNewTeacher({ ...newTeacher, image: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
+                >
+                  Add Staff Member
+                </button>
+              </form>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">Existing Staff Members</h3>
+              <div className="space-y-4">
+                {content.teachers.map((teacher) => (
+                  <div key={teacher.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <img src={teacher.image} alt={teacher.name} className="w-12 h-12 rounded-full object-cover" />
+                      <div>
+                        <h4 className="font-semibold">{teacher.name}</h4>
+                        <p className="text-sm text-gray-600">{teacher.designation}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => deleteTeacher(teacher.id)}
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
+                    >
+                      Delete Staff Member
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'events':
+        return (
+          <div className="space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900">Manage Events</h2>
+            
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">Events Page Content</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
+                  <input
+                    type="text"
+                    value={content.eventsPage.pageTitle}
+                    onChange={(e) => updateContent({ 
+                      eventsPage: { ...content.eventsPage, pageTitle: e.target.value }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
+                  <textarea
+                    value={content.eventsPage.pageSubtitle}
+                    onChange={(e) => updateContent({ 
+                      eventsPage: { ...content.eventsPage, pageSubtitle: e.target.value }
+                    })}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">Add New Event</h3>
+              <form onSubmit={handleEventSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Event Title</label>
+                    <input
+                      type="text"
+                      required
+                      value={newEvent.title}
+                      onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                    <input
+                      type="text"
+                      required
+                      value={newEvent.date}
+                      onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+                      placeholder="March 15, 2025"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                    <input
+                      type="text"
+                      required
+                      value={newEvent.time}
+                      onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+                      placeholder="10:00 AM - 4:00 PM"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                    <input
+                      type="text"
+                      required
+                      value={newEvent.location}
+                      onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                    <select
+                      value={newEvent.category}
+                      onChange={(e) => setNewEvent({ ...newEvent, category: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="Academic">Academic</option>
+                      <option value="Sports">Sports</option>
+                      <option value="Cultural">Cultural</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <select
+                      value={newEvent.isUpcoming ? 'upcoming' : 'past'}
+                      onChange={(e) => setNewEvent({ ...newEvent, isUpcoming: e.target.value === 'upcoming' })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="upcoming">Upcoming</option>
+                      <option value="past">Past</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                  <textarea
+                    required
+                    value={newEvent.description}
+                    onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Event Image URL</label>
+                  <input
+                    type="url"
+                    required
+                    value={newEvent.image}
+                    onChange={(e) => setNewEvent({ ...newEvent, image: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
+                >
+                  Add Event
+                </button>
+              </form>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">Existing Events</h3>
+              <div className="space-y-4">
+                {content.events.map((event) => (
+                  <div key={event.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <img src={event.image} alt={event.title} className="w-12 h-12 rounded object-cover" />
+                      <div>
+                        <h4 className="font-semibold">{event.title}</h4>
+                        <p className="text-sm text-gray-600">{event.date} - {event.category}</p>
+                        <span className={`text-xs px-2 py-1 rounded ${event.isUpcoming ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                          {event.isUpcoming ? 'Upcoming' : 'Past'}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => deleteEvent(event.id)}
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
+                    >
+                      Delete Event
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'gallery':
+        return (
+          <div className="space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900">Manage Gallery</h2>
+            
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">Gallery Page Content</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
+                  <input
+                    type="text"
+                    value={content.galleryPage.pageTitle}
+                    onChange={(e) => updateContent({ 
+                      galleryPage: { ...content.galleryPage, pageTitle: e.target.value }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
+                  <textarea
+                    value={content.galleryPage.pageSubtitle}
+                    onChange={(e) => updateContent({ 
+                      galleryPage: { ...content.galleryPage, pageSubtitle: e.target.value }
+                    })}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">Add New Gallery Item</h3>
+              <form onSubmit={handleGallerySubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                    <input
+                      type="text"
+                      required
+                      value={newGalleryItem.title}
+                      onChange={(e) => setNewGalleryItem({ ...newGalleryItem, title: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                    <select
+                      value={newGalleryItem.type}
+                      onChange={(e) => setNewGalleryItem({ ...newGalleryItem, type: e.target.value as 'image' | 'video' })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="image">Image</option>
+                      <option value="video">Video</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                    <select
+                      value={newGalleryItem.category}
+                      onChange={(e) => setNewGalleryItem({ ...newGalleryItem, category: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="academic">Academic</option>
+                      <option value="cultural">Cultural</option>
+                      <option value="sports">Sports</option>
+                      <option value="events">Events</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Source URL</label>
+                    <input
+                      type="url"
+                      required
+                      value={newGalleryItem.src}
+                      onChange={(e) => setNewGalleryItem({ ...newGalleryItem, src: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Thumbnail URL</label>
+                  <input
+                    type="url"
+                    required
+                    value={newGalleryItem.thumbnail}
+                    onChange={(e) => setNewGalleryItem({ ...newGalleryItem, thumbnail: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
+                >
+                  Add Gallery Item
+                </button>
+              </form>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">Existing Gallery Items</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {content.galleryItems.map((item) => (
+                  <div key={item.id} className="border border-gray-200 rounded-lg overflow-hidden">
+                    <img src={item.thumbnail} alt={item.title} className="w-full h-32 object-cover" />
+                    <div className="p-3">
+                      <h4 className="font-semibold text-sm">{item.title}</h4>
+                      <p className="text-xs text-gray-600 capitalize">{item.category} - {item.type}</p>
+                      <button
+                        onClick={() => deleteGalleryItem(item.id)}
+                        className="mt-2 bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs transition-colors duration-200"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'settings':
+        return (
+          <div className="space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
+            
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">School Information</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">School Logo URL</label>
+                  <input
+                    type="url"
+                    value={content.logoImage}
+                    onChange={(e) => updateContent({ logoImage: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Welcome Message</label>
+                  <textarea
+                    value={content.welcomeMessage}
+                    onChange={(e) => updateContent({ welcomeMessage: e.target.value })}
+                    rows={6}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">School Statistics</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Years of Excellence</label>
+                  <input
+                    type="number"
+                    value={content.schoolStats.yearsOfExcellence}
+                    onChange={(e) => updateContent({ 
+                      schoolStats: { ...content.schoolStats, yearsOfExcellence: parseInt(e.target.value) }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Total Students</label>
+                  <input
+                    type="number"
+                    value={content.schoolStats.totalStudents}
+                    onChange={(e) => updateContent({ 
+                      schoolStats: { ...content.schoolStats, totalStudents: parseInt(e.target.value) }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Qualified Teachers</label>
+                  <input
+                    type="number"
+                    value={content.schoolStats.qualifiedTeachers}
+                    onChange={(e) => updateContent({ 
+                      schoolStats: { ...content.schoolStats, qualifiedTeachers: parseInt(e.target.value) }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Annual Events</label>
+                  <input
+                    type="number"
+                    value={content.schoolStats.annualEvents}
+                    onChange={(e) => updateContent({ 
+                      schoolStats: { ...content.schoolStats, annualEvents: parseInt(e.target.value) }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 1</label>
+                  <input
+                    type="text"
+                    value={content.contactPage.address.line1}
+                    onChange={(e) => updateContent({ 
+                      contactPage: { 
+                        ...content.contactPage, 
+                        address: { ...content.contactPage.address, line1: e.target.value }
+                      }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 2</label>
+                  <input
+                    type="text"
+                    value={content.contactPage.address.line2}
+                    onChange={(e) => updateContent({ 
+                      contactPage: { 
+                        ...content.contactPage, 
+                        address: { ...content.contactPage.address, line2: e.target.value }
+                      }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
+                    <input
+                      type="text"
+                      value={content.contactPage.address.line3}
+                      onChange={(e) => updateContent({ 
+                        contactPage: { 
+                          ...content.contactPage, 
+                          address: { ...content.contactPage.address, line3: e.target.value }
+                        }
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
+                    <input
+                      type="text"
+                      value={content.contactPage.address.pincode}
+                      onChange={(e) => updateContent({ 
+                        contactPage: { 
+                          ...content.contactPage, 
+                          address: { ...content.contactPage.address, pincode: e.target.value }
+                        }
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
       default:
         return <div>Select a section to edit</div>;
     }
