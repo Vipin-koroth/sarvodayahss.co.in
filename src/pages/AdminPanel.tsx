@@ -272,6 +272,117 @@ const AdminPanel = () => {
         </div>
       </div>
 
+      {/* News Banner Section */}
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h3 className="text-lg font-semibold mb-4">Latest News Banner</h3>
+        
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                News Banner Title
+              </label>
+              <input
+                type="text"
+                value={content.bannerTitle || ''}
+                onChange={(e) => updateContent({ bannerTitle: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Latest News"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                News Banner Type
+              </label>
+              <select
+                value={content.bannerType || 'info'}
+                onChange={(e) => updateContent({ bannerType: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="info">Info (Blue)</option>
+                <option value="success">Success (Green)</option>
+                <option value="warning">Warning (Yellow)</option>
+                <option value="error">Error (Red)</option>
+              </select>
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Latest News Content
+            </label>
+            <textarea
+              rows={3}
+              value={content.bannerMessage || ''}
+              onChange={(e) => updateContent({ bannerMessage: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter latest news and announcements separated by | (pipe symbol)"
+            ></textarea>
+            <p className="text-xs text-gray-500 mt-1">
+              Separate multiple news items with | symbol (e.g., "News 1 | News 2 | News 3")
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Action Button Text
+              </label>
+              <input
+                type="text"
+                value={content.bannerButtonText || ''}
+                onChange={(e) => updateContent({ bannerButtonText: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Read More"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Action Button Link
+              </label>
+              <input
+                type="text"
+                value={content.bannerButtonLink || ''}
+                onChange={(e) => updateContent({ bannerButtonLink: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="/contact"
+              />
+            </div>
+          </div>
+          
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              checked={content.bannerEnabled || false}
+              onChange={(e) => updateContent({ bannerEnabled: e.target.checked })}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <label className="ml-2 block text-sm text-gray-900">
+              Show Latest News Banner
+            </label>
+          </div>
+          
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <h4 className="font-medium text-blue-900 mb-2">News Banner Preview:</h4>
+            <div className={`p-3 rounded-md text-white text-sm ${
+              content.bannerType === 'success' ? 'bg-emerald-600' :
+              content.bannerType === 'warning' ? 'bg-yellow-600' :
+              content.bannerType === 'error' ? 'bg-red-600' :
+              'bg-blue-600'
+            }`}>
+              <strong>{content.bannerTitle || 'Latest News'}</strong>: {content.bannerMessage || 'No news content'}
+              {content.bannerButtonText && (
+                <span className="ml-2 bg-white/20 px-2 py-1 rounded text-xs">
+                  {content.bannerButtonText}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Section Titles */}
       <div className="bg-white p-6 rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-4">Section Titles</h3>
