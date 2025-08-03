@@ -957,3 +957,47 @@ const AdminPanel = () => {
               value={content.academicsPage.higherSecondaryTitle}
               onChange={(e) => handleNestedUpdate('academicsPage', 'higherSecondaryTitle', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-white shadow-lg">
+        <div className="p-6">
+          <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
+        </div>
+        <nav className="mt-6">
+          {sidebarItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.key}
+                onClick={() => setActiveSection(item.key)}
+                className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-50 ${
+                  activeSection === item.key ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700'
+                }`}
+              >
+                <Icon className="h-5 w-5 mr-3" />
+                {item.label}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-8">
+        {activeSection === 'homepage' && renderHomepageEditor()}
+        {activeSection === 'about' && renderAboutPageEditor()}
+        {activeSection === 'academics' && renderAcademicsPageEditor()}
+      </div>
+    </div>
+  );
+};
+
+export default AdminPanel;
