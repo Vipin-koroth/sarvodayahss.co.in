@@ -87,9 +87,6 @@ const AdminPanel = () => {
       welcomeMessage: content.welcomeMessage,
       missionStatement: content.missionStatement,
       visionStatement: content.visionStatement,
-      heroImage: content.heroImage,
-      featuredImages: [...content.featuredImages],
-      transitionSettings: { ...content.transitionSettings },
       schoolStats: { ...content.schoolStats }
     });
   };
@@ -213,6 +210,9 @@ const AdminPanel = () => {
                       onClick={() => setActiveSection(item.key)}
                       className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${
                         activeSection === item.key
+                        heroImage: content.heroImage,
+                        featuredImages: [...content.featuredImages],
+                        transitionSettings: { ...content.transitionSettings },
                           ? 'bg-blue-800 text-white'
                           : 'text-gray-700 hover:bg-gray-100'
                       }`}
@@ -372,9 +372,6 @@ const AdminPanel = () => {
                           welcomeMessage: content.welcomeMessage,
                           missionStatement: content.missionStatement,
                           visionStatement: content.visionStatement,
-                          heroImage: content.heroImage,
-                          featuredImages: [...content.featuredImages],
-                          transitionSettings: { ...content.transitionSettings },
                           schoolStats: { ...content.schoolStats }
                         })}
                         className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
