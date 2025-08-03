@@ -30,9 +30,7 @@ const AdminPanel = () => {
     deleteGalleryItem,
     addAdministration,
     updateAdministration,
-    deleteAdministration,
-    uploadVideo,
-    deleteVideo
+    deleteAdministration
   } = useContent();
   
   const [activeSection, setActiveSection] = useState('homepage');
@@ -68,7 +66,6 @@ const AdminPanel = () => {
     designation: '',
     image: ''
   });
-  const [uploadingVideo, setUploadingVideo] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,6 +151,45 @@ const AdminPanel = () => {
     e.preventDefault();
     addAdministration(newAdmin);
     setNewAdmin({ name: '', designation: '', image: '' });
+  };
+
+  const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('video/')) {
+      alert('Please select a valid video file');
+      return;
+    }
+    
+    // Validate file size (max 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      alert('Video file size must be less than 50MB');
+      return;
+    }
+    
+    setUploadingVideo(true);
+    try {
+      const videoUrl = await uploadVideo(file);
+      alert('Video uploaded successfully!');
+    } catch (error) {
+      alert('Error uploading video. Please try again.');
+    } finally {
+      setUploadingVideo(false);
+      // Reset the input
+      event.target.value = '';
+    }
+  };
+
+  const handleSetHeroVideo = (videoUrl: string) => {
+    updateContent({ heroVideo: videoUrl });
+  };
+
+  const handleDeleteVideo = (videoId: string) => {
+    if (confirm('Are you sure you want to delete this video?')) {
+      deleteVideo(videoId);
+    }
   };
 
   if (!isAuthenticated) {
