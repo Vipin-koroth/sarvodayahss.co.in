@@ -1,16 +1,19 @@
 import React from 'react';
 import { Church, Heart, Target, Star, BookOpen, Users } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 const AboutPage = () => {
+  const { content } = useContent();
+  const { aboutPage } = content;
+
   return (
     <div className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">About Us</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{aboutPage.pageTitle}</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover the rich history and values that make Sarvodaya Higher Secondary School 
-            a beacon of educational excellence in Wayanad.
+            {aboutPage.pageSubtitle}
           </p>
         </div>
 
@@ -18,19 +21,15 @@ const AboutPage = () => {
         <section className="mb-16">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Our History</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">{aboutPage.historyTitle}</h2>
               <div className="space-y-4 text-gray-700">
-                <p>
-                  Established in 1975, Sarvodaya Higher Secondary School has been a cornerstone 
-                  of quality education in the scenic district of Wayanad. The school was founded 
-                  with the vision of providing accessible, high-quality education to the rural 
-                  communities of Kerala.
-                </p>
-                <p>
-                  From humble beginnings with just 50 students, we have grown to become one of 
-                  the most respected educational institutions in the region, serving over 1200 
-                  students from diverse backgrounds.
-                </p>
+                {aboutPage.historyContent.map((paragraph, index) => (
+                  <p key={index}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </div>
                 <p>
                   Our journey has been marked by consistent academic excellence, innovative 
                   teaching methodologies, and a commitment to holistic development that extends 
@@ -40,7 +39,7 @@ const AboutPage = () => {
             </div>
             <div className="bg-gradient-to-br from-blue-50 to-emerald-50 p-8 rounded-xl">
               <div className="text-center">
-                <div className="text-4xl font-bold text-blue-800 mb-2">1975</div>
+                <div className="text-4xl font-bold text-blue-800 mb-2">{aboutPage.establishedYear}</div>
                 <p className="text-gray-600 mb-4">Year Established</p>
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
@@ -48,7 +47,7 @@ const AboutPage = () => {
                     <p className="text-sm text-gray-600">Years of Service</p>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-emerald-800">1200+</div>
+                    <div className="text-2xl font-bold text-emerald-800">{aboutPage.currentStudents}+</div>
                     <p className="text-sm text-gray-600">Current Students</p>
                   </div>
                 </div>
@@ -62,22 +61,16 @@ const AboutPage = () => {
           <div className="bg-slate-50 p-8 md:p-12 rounded-xl">
             <div className="text-center mb-8">
               <Church className="h-16 w-16 text-blue-800 mx-auto mb-4" />
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Jesuit Management</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">{aboutPage.jesuitTitle}</h2>
             </div>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Kerala Jesuit Fathers</h3>
-                <p className="text-gray-700 mb-4">
-                  The school is proudly managed by the Kerala Jesuit Fathers, who bring centuries 
-                  of educational excellence and spiritual guidance to our institution. The Society 
-                  of Jesus has been at the forefront of education worldwide, known for their 
-                  commitment to academic rigor and character formation.
-                </p>
-                <p className="text-gray-700">
-                  Under Jesuit guidance, our school follows the motto "Ad Majorem Dei Gloriam" 
-                  (For the Greater Glory of God), ensuring that every student receives not just 
-                  academic knowledge but also moral and spiritual development.
-                </p>
+                {aboutPage.jesuitContent.map((paragraph, index) => (
+                  <p key={index} className="text-gray-700 mb-4">
+                    {paragraph}
+                  </p>
+                ))}
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Jesuit Educational Tradition</h3>
@@ -109,19 +102,11 @@ const AboutPage = () => {
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-blue-800 text-white p-8 rounded-xl">
               <h3 className="text-2xl font-bold mb-6">Our Vision</h3>
-              <p className="text-blue-100 leading-relaxed">
-                To be a premier educational institution that transforms lives through 
-                excellence in academics, character formation, and spiritual development, 
-                creating compassionate leaders who serve society with integrity and wisdom.
-              </p>
+              <p className="text-blue-100 leading-relaxed">{aboutPage.vision}</p>
             </div>
             <div className="bg-emerald-800 text-white p-8 rounded-xl">
               <h3 className="text-2xl font-bold mb-6">Our Mission</h3>
-              <p className="text-emerald-100 leading-relaxed">
-                To provide holistic education that integrates academic excellence with 
-                moral values, preparing students to be responsible citizens who contribute 
-                meaningfully to society while staying rooted in their cultural heritage.
-              </p>
+              <p className="text-emerald-100 leading-relaxed">{aboutPage.mission}</p>
             </div>
           </div>
         </section>
@@ -135,33 +120,30 @@ const AboutPage = () => {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="bg-blue-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="h-8 w-8 text-blue-800" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Academic Excellence</h3>
-              <p className="text-gray-600">
-                Commitment to highest standards of teaching and learning
-              </p>
-            </div>
-            <div className="text-center p-6">
-              <div className="bg-emerald-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Heart className="h-8 w-8 text-emerald-800" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Compassion</h3>
-              <p className="text-gray-600">
-                Caring for each student's individual needs and growth
-              </p>
-            </div>
-            <div className="text-center p-6">
-              <div className="bg-yellow-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-yellow-800" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Service</h3>
-              <p className="text-gray-600">
-                Developing leaders who serve others and transform society
-              </p>
-            </div>
+            {aboutPage.coreValues.map((value, index) => {
+              const getIcon = (iconName: string) => {
+                switch (iconName) {
+                  case 'BookOpen': return BookOpen;
+                  case 'Heart': return Heart;
+                  case 'Users': return Users;
+                  default: return BookOpen;
+                }
+              };
+              const IconComponent = getIcon(value.icon);
+              const colorClasses = ['bg-blue-100 text-blue-800', 'bg-emerald-100 text-emerald-800', 'bg-yellow-100 text-yellow-800'];
+              
+              return (
+                <div key={index} className="text-center p-6">
+                  <div className={`p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 ${colorClasses[index] || 'bg-gray-100 text-gray-800'}`}>
+                    <IconComponent className="h-8 w-8" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{value.title}</h3>
+                  <p className="text-gray-600">
+                    {value.description}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </section>
       </div>

@@ -1,87 +1,13 @@
 import React, { useState } from 'react';
 import { Calendar, MapPin, Clock, Users } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 const EventsPage = () => {
+  const { content } = useContent();
   const [activeTab, setActiveTab] = useState('upcoming');
 
-  const upcomingEvents = [
-    {
-      title: "Annual Science Exhibition",
-      date: "March 15, 2025",
-      time: "10:00 AM - 4:00 PM",
-      location: "School Auditorium",
-      description: "Students showcase their innovative science projects and experiments.",
-      image: "https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Academic"
-    },
-    {
-      title: "Sports Day Celebrations",
-      date: "March 28, 2025",
-      time: "8:00 AM - 5:00 PM",
-      location: "School Sports Ground",
-      description: "Annual athletic meet with various sports competitions and cultural programs.",
-      image: "https://images.pexels.com/photos/159581/rugby-sports-game-ball-159581.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Sports"
-    },
-    {
-      title: "Malayalam Literary Fest",
-      date: "April 10, 2025",
-      time: "2:00 PM - 6:00 PM",
-      location: "School Auditorium",
-      description: "Celebration of Malayalam literature with poetry, storytelling, and debates.",
-      image: "https://images.pexels.com/photos/1370295/pexels-photo-1370295.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Cultural"
-    },
-    {
-      title: "Parent-Teacher Conference",
-      date: "April 22, 2025",
-      time: "9:00 AM - 3:00 PM",
-      location: "School Premises",
-      description: "Important meeting to discuss student progress and academic development.",
-      image: "https://images.pexels.com/photos/8500607/pexels-photo-8500607.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Academic"
-    }
-  ];
-
-  const pastEvents = [
-    {
-      title: "Christmas Celebration 2024",
-      date: "December 20, 2024",
-      time: "10:00 AM - 2:00 PM",
-      location: "School Auditorium",
-      description: "Festive celebration with carol singing, nativity play, and cultural programs.",
-      image: "https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Cultural"
-    },
-    {
-      title: "Annual Day Celebration",
-      date: "November 15, 2024",
-      time: "6:00 PM - 9:00 PM",
-      location: "School Auditorium",
-      description: "Grand celebration showcasing student talents in dance, music, and drama.",
-      image: "https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Cultural"
-    },
-    {
-      title: "Inter-School Quiz Competition",
-      date: "October 8, 2024",
-      time: "10:00 AM - 4:00 PM",
-      location: "School Auditorium",
-      description: "Regional quiz competition with participation from 15 schools.",
-      image: "https://images.pexels.com/photos/5427674/pexels-photo-5427674.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Academic"
-    },
-    {
-      title: "Gandhi Jayanti Celebration",
-      date: "October 2, 2024",
-      time: "8:00 AM - 11:00 AM",
-      location: "School Assembly Hall",
-      description: "Special assembly honoring Mahatma Gandhi with speeches and cultural programs.",
-      image: "https://images.pexels.com/photos/8926991/pexels-photo-8926991.jpeg?auto=compress&cs=tinysrgb&w=600",
-      category: "Cultural"
-    }
-  ];
-
+  const upcomingEvents = content.events.filter(event => event.isUpcoming);
+  const pastEvents = content.events.filter(event => !event.isUpcoming);
   const currentEvents = activeTab === 'upcoming' ? upcomingEvents : pastEvents;
 
   const getCategoryColor = (category: string) => {

@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 const ContactPage = () => {
+  const { content } = useContent();
+  const { contactPage } = content;
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -30,10 +34,9 @@ const ContactPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Contact Us</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{contactPage.pageTitle}</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            We'd love to hear from you. Get in touch with us for admissions, 
-            inquiries, or any questions about our school.
+            {contactPage.pageSubtitle}
           </p>
         </div>
 
@@ -50,9 +53,9 @@ const ContactPage = () => {
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Address</h3>
                   <p className="text-gray-600">
-                    Sarvodaya Higher Secondary School<br />
-                    Eachome, Wayanad District<br />
-                    Kerala, India - 673592
+                    {contactPage.address.line1}<br />
+                    {contactPage.address.line2}<br />
+                    {contactPage.address.line3} - {contactPage.address.pincode}
                   </p>
                 </div>
               </div>
@@ -63,8 +66,9 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                  <p className="text-gray-600">+91 493 622 3456</p>
-                  <p className="text-gray-600">+91 493 622 3457 (Office)</p>
+                  {contactPage.phones.map((phone, index) => (
+                    <p key={index} className="text-gray-600">{phone}</p>
+                  ))}
                 </div>
               </div>
 
@@ -74,8 +78,9 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                  <p className="text-gray-600">info@sarvodayahss.edu.in</p>
-                  <p className="text-gray-600">principal@sarvodayahss.edu.in</p>
+                  {contactPage.emails.map((email, index) => (
+                    <p key={index} className="text-gray-600">{email}</p>
+                  ))}
                 </div>
               </div>
 
@@ -85,9 +90,9 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Office Hours</h3>
-                  <p className="text-gray-600">Monday - Friday: 8:00 AM - 4:00 PM</p>
-                  <p className="text-gray-600">Saturday: 8:00 AM - 12:00 PM</p>
-                  <p className="text-gray-600">Sunday: Closed</p>
+                  <p className="text-gray-600">{contactPage.officeHours.weekdays}</p>
+                  <p className="text-gray-600">{contactPage.officeHours.saturday}</p>
+                  <p className="text-gray-600">{contactPage.officeHours.sunday}</p>
                 </div>
               </div>
             </div>
@@ -99,7 +104,7 @@ const ContactPage = () => {
                 <div className="text-center">
                   <MapPin className="h-12 w-12 text-gray-500 mx-auto mb-2" />
                   <p className="text-gray-600">Google Maps Integration</p>
-                  <p className="text-sm text-gray-500">Eachome, Wayanad, Kerala</p>
+                  <p className="text-sm text-gray-500">{contactPage.address.line2}</p>
                 </div>
               </div>
             </div>
@@ -214,14 +219,14 @@ const ContactPage = () => {
                 <Phone className="h-8 w-8 mx-auto mb-3" />
                 <h3 className="font-bold mb-2">Call Us</h3>
                 <p className="text-blue-100">For immediate assistance</p>
-                <p className="text-sm mt-2">+91 493 622 3456</p>
+                <p className="text-sm mt-2">{contactPage.phones[0]}</p>
               </div>
               
               <div className="bg-emerald-800 text-white p-6 rounded-xl text-center">
                 <Mail className="h-8 w-8 mx-auto mb-3" />
                 <h3 className="font-bold mb-2">Email Us</h3>
                 <p className="text-emerald-100">For detailed inquiries</p>
-                <p className="text-sm mt-2">info@sarvodayahss.edu.in</p>
+                <p className="text-sm mt-2">{contactPage.emails[0]}</p>
               </div>
             </div>
           </div>

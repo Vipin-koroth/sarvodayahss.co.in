@@ -1,75 +1,11 @@
 import React, { useState } from 'react';
 import { X, Play, Image, Video } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 const GalleryPage = () => {
+  const { content } = useContent();
   const [selectedMedia, setSelectedMedia] = useState<any>(null);
   const [activeFilter, setActiveFilter] = useState('all');
-
-  const galleryItems = [
-    {
-      type: 'image',
-      src: 'https://images.pexels.com/photos/8926991/pexels-photo-8926991.jpeg?auto=compress&cs=tinysrgb&w=800',
-      thumbnail: 'https://images.pexels.com/photos/8926991/pexels-photo-8926991.jpeg?auto=compress&cs=tinysrgb&w=400',
-      title: 'Independence Day Celebration',
-      category: 'events'
-    },
-    {
-      type: 'image',
-      src: 'https://images.pexels.com/photos/5427674/pexels-photo-5427674.jpeg?auto=compress&cs=tinysrgb&w=800',
-      thumbnail: 'https://images.pexels.com/photos/5427674/pexels-photo-5427674.jpeg?auto=compress&cs=tinysrgb&w=400',
-      title: 'Science Exhibition',
-      category: 'academic'
-    },
-    {
-      type: 'image',
-      src: 'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=800',
-      thumbnail: 'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=400',
-      title: 'Annual Day Performance',
-      category: 'cultural'
-    },
-    {
-      type: 'image',
-      src: 'https://images.pexels.com/photos/159581/rugby-sports-game-ball-159581.jpeg?auto=compress&cs=tinysrgb&w=800',
-      thumbnail: 'https://images.pexels.com/photos/159581/rugby-sports-game-ball-159581.jpeg?auto=compress&cs=tinysrgb&w=400',
-      title: 'Sports Day',
-      category: 'sports'
-    },
-    {
-      type: 'image',
-      src: 'https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=800',
-      thumbnail: 'https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=400',
-      title: 'Chemistry Lab Session',
-      category: 'academic'
-    },
-    {
-      type: 'image',
-      src: 'https://images.pexels.com/photos/1370295/pexels-photo-1370295.jpeg?auto=compress&cs=tinysrgb&w=800',
-      thumbnail: 'https://images.pexels.com/photos/1370295/pexels-photo-1370295.jpeg?auto=compress&cs=tinysrgb&w=400',
-      title: 'Library Reading Session',
-      category: 'academic'
-    },
-    {
-      type: 'image',
-      src: 'https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=800',
-      thumbnail: 'https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=400',
-      title: 'Christmas Celebration',
-      category: 'cultural'
-    },
-    {
-      type: 'image',
-      src: 'https://images.pexels.com/photos/8500607/pexels-photo-8500607.jpeg?auto=compress&cs=tinysrgb&w=800',
-      thumbnail: 'https://images.pexels.com/photos/8500607/pexels-photo-8500607.jpeg?auto=compress&cs=tinysrgb&w=400',
-      title: 'Classroom Learning',
-      category: 'academic'
-    },
-    {
-      type: 'video',
-      src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      thumbnail: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=400',
-      title: 'School Documentary',
-      category: 'events'
-    }
-  ];
 
   const filters = [
     { key: 'all', label: 'All' },
@@ -80,8 +16,8 @@ const GalleryPage = () => {
   ];
 
   const filteredItems = activeFilter === 'all' 
-    ? galleryItems 
-    : galleryItems.filter(item => item.category === activeFilter);
+    ? content.galleryItems 
+    : content.galleryItems.filter(item => item.category === activeFilter);
 
   const openLightbox = (item: any) => {
     setSelectedMedia(item);

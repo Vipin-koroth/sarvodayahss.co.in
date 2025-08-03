@@ -1,48 +1,19 @@
 import React from 'react';
 import { BookOpen, Microscope, Globe, Calculator, Palette, Music } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 const AcademicsPage = () => {
-  const primaryClasses = [
-    { range: "Class 1-5", description: "Foundation years focusing on basic literacy, numeracy, and life skills" },
-    { range: "Class 6-8", description: "Middle school curriculum with introduction to specialized subjects" },
-    { range: "Class 9-10", description: "Secondary education preparing for board examinations" }
-  ];
-
-  const higherSecondaryStreams = [
-    {
-      name: "Science Stream",
-      icon: Microscope,
-      subjects: ["Physics", "Chemistry", "Mathematics", "Biology", "English", "Malayalam"],
-      description: "Comprehensive science education preparing students for medical and engineering careers",
-      color: "blue"
-    },
-    {
-      name: "Humanities Stream",
-      icon: Globe,
-      subjects: ["History", "Political Science", "Economics", "Geography", "English", "Malayalam"],
-      description: "Liberal arts education fostering critical thinking and social awareness",
-      color: "emerald"
-    }
-  ];
-
-  const facilities = [
-    { name: "Science Laboratory", icon: Microscope, description: "Well-equipped labs for Physics, Chemistry, and Biology" },
-    { name: "Computer Lab", icon: Calculator, description: "Modern computer facilities with internet connectivity" },
-    { name: "Library", icon: BookOpen, description: "Extensive collection of books and digital resources" },
-    { name: "Art Studio", icon: Palette, description: "Creative space for artistic expression and learning" },
-    { name: "Music Room", icon: Music, description: "Dedicated space for music lessons and cultural activities" },
-    { name: "Sports Ground", icon: Globe, description: "Athletic facilities for physical education and sports" }
-  ];
+  const { content } = useContent();
+  const { academicsPage } = content;
 
   return (
     <div className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Academic Programs</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{academicsPage.pageTitle}</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Comprehensive education from foundation to higher secondary levels, 
-            preparing students for success in academics and life.
+            {academicsPage.pageSubtitle}
           </p>
         </div>
 
@@ -50,7 +21,7 @@ const AcademicsPage = () => {
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Primary & Secondary Education</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {primaryClasses.map((classInfo, index) => (
+            {academicsPage.primaryClasses.map((classInfo, index) => (
               <div key={index} className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl">
                 <h3 className="text-xl font-bold text-blue-800 mb-4">{classInfo.range}</h3>
                 <p className="text-gray-700">{classInfo.description}</p>
@@ -63,8 +34,15 @@ const AcademicsPage = () => {
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Higher Secondary Education (Classes 11 & 12)</h2>
           <div className="grid md:grid-cols-2 gap-8">
-            {higherSecondaryStreams.map((stream, index) => {
-              const IconComponent = stream.icon;
+            {academicsPage.higherSecondaryStreams.map((stream, index) => {
+              const getIcon = (iconName: string) => {
+                switch (iconName) {
+                  case 'Microscope': return Microscope;
+                  case 'Globe': return Globe;
+                  default: return Microscope;
+                }
+              };
+              const IconComponent = getIcon(stream.name === 'Science Stream' ? 'Microscope' : 'Globe');
               const colorClasses = {
                 blue: "from-blue-50 to-blue-100 border-blue-200",
                 emerald: "from-emerald-50 to-emerald-100 border-emerald-200"
@@ -105,8 +83,19 @@ const AcademicsPage = () => {
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Academic Facilities</h2>
           <div className="grid md:grid-cols-3 gap-6">
-            {facilities.map((facility, index) => {
-              const IconComponent = facility.icon;
+            {academicsPage.facilities.map((facility, index) => {
+              const getIcon = (iconName: string) => {
+                switch (iconName) {
+                  case 'Microscope': return Microscope;
+                  case 'Calculator': return Calculator;
+                  case 'BookOpen': return BookOpen;
+                  case 'Palette': return Palette;
+                  case 'Music': return Music;
+                  case 'Globe': return Globe;
+                  default: return BookOpen;
+                }
+              };
+              const IconComponent = getIcon(facility.icon);
               return (
                 <div key={index} className="bg-white border border-gray-200 p-6 rounded-xl hover:shadow-lg transition-shadow duration-300">
                   <IconComponent className="h-10 w-10 text-blue-800 mb-4" />
@@ -128,15 +117,15 @@ const AcademicsPage = () => {
             </p>
             <div className="grid md:grid-cols-3 gap-8">
               <div>
-                <div className="text-3xl font-bold mb-2">95%</div>
+                <div className="text-3xl font-bold mb-2">{academicsPage.academicStats.passRate}%</div>
                 <p className="text-blue-100">Board Exam Pass Rate</p>
               </div>
               <div>
-                <div className="text-3xl font-bold mb-2">80%</div>
+                <div className="text-3xl font-bold mb-2">{academicsPage.academicStats.higherEducationRate}%</div>
                 <p className="text-blue-100">Higher Education Admissions</p>
               </div>
               <div>
-                <div className="text-3xl font-bold mb-2">50+</div>
+                <div className="text-3xl font-bold mb-2">{academicsPage.academicStats.annualAwards}+</div>
                 <p className="text-blue-100">Academic Awards (Annual)</p>
               </div>
             </div>

@@ -1,81 +1,9 @@
 import React from 'react';
 import { Mail, Award, BookOpen, Microscope, Calculator, Globe } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 const TeachersPage = () => {
-  const teachers = [
-    {
-      name: "Rev. Fr. Thomas Abraham",
-      designation: "Principal",
-      subjects: ["Administration", "Moral Science"],
-      experience: "25 years",
-      education: "M.A. Education, B.Ed.",
-      image: "https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      name: "Mrs. Priya Nair",
-      designation: "Vice Principal",
-      subjects: ["Mathematics", "Statistics"],
-      experience: "20 years",
-      education: "M.Sc. Mathematics, B.Ed.",
-      image: "https://images.pexels.com/photos/3823495/pexels-photo-3823495.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      name: "Mr. Rajesh Kumar",
-      designation: "Head of Science Department",
-      subjects: ["Physics", "Computer Science"],
-      experience: "18 years",
-      education: "M.Sc. Physics, B.Ed.",
-      image: "https://images.pexels.com/photos/5212317/pexels-photo-5212317.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      name: "Mrs. Sushma Thomas",
-      designation: "English Teacher",
-      subjects: ["English Literature", "Communication"],
-      experience: "15 years",
-      education: "M.A. English, B.Ed.",
-      image: "https://images.pexels.com/photos/3771074/pexels-photo-3771074.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      name: "Dr. Anand Menon",
-      designation: "Chemistry Teacher",
-      subjects: ["Chemistry", "Environmental Science"],
-      experience: "22 years",
-      education: "Ph.D. Chemistry, B.Ed.",
-      image: "https://images.pexels.com/photos/5212320/pexels-photo-5212320.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      name: "Mrs. Lakshmi Devi",
-      designation: "Malayalam Teacher",
-      subjects: ["Malayalam", "Kerala History"],
-      experience: "16 years",
-      education: "M.A. Malayalam, B.Ed.",
-      image: "https://images.pexels.com/photos/3771079/pexels-photo-3771079.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      name: "Mr. Vikram Singh",
-      designation: "History Teacher",
-      subjects: ["History", "Political Science"],
-      experience: "14 years",
-      education: "M.A. History, B.Ed.",
-      image: "https://images.pexels.com/photos/5212324/pexels-photo-5212324.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      name: "Mrs. Meera Krishnan",
-      designation: "Biology Teacher",
-      subjects: ["Biology", "Biotechnology"],
-      experience: "12 years",
-      education: "M.Sc. Biology, B.Ed.",
-      image: "https://images.pexels.com/photos/3823488/pexels-photo-3823488.jpeg?auto=compress&cs=tinysrgb&w=400"
-    },
-    {
-      name: "Mr. Suresh Babu",
-      designation: "Geography Teacher",
-      subjects: ["Geography", "Environmental Studies"],
-      experience: "19 years",
-      education: "M.A. Geography, B.Ed.",
-      image: "https://images.pexels.com/photos/5212332/pexels-photo-5212332.jpeg?auto=compress&cs=tinysrgb&w=400"
-    }
-  ];
+  const { content } = useContent();
 
   return (
     <div className="py-16 bg-gray-50">
@@ -91,7 +19,7 @@ const TeachersPage = () => {
 
         {/* Teachers Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {teachers.map((teacher, index) => (
+          {content.teachers.map((teacher, index) => (
             <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
               <div className="aspect-w-3 aspect-h-4">
                 <img

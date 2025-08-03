@@ -1,7 +1,39 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+interface Teacher {
+  id: string;
+  name: string;
+  designation: string;
+  subjects: string[];
+  experience: string;
+  education: string;
+  image: string;
+}
+
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  image: string;
+  category: string;
+  isUpcoming: boolean;
+}
+
+interface GalleryItem {
+  id: string;
+  type: 'image' | 'video';
+  src: string;
+  thumbnail: string;
+  title: string;
+  category: string;
+}
+
 interface ContentContextType {
   content: {
+    // Homepage Content
     welcomeMessage: string;
     missionStatement: string;
     visionStatement: string;
@@ -18,8 +50,85 @@ interface ContentContextType {
       qualifiedTeachers: number;
       annualEvents: number;
     };
+    
+    // About Page Content
+    aboutPage: {
+      pageTitle: string;
+      pageSubtitle: string;
+      historyTitle: string;
+      historyContent: string[];
+      establishedYear: number;
+      currentStudents: number;
+      jesuitTitle: string;
+      jesuitContent: string[];
+      vision: string;
+      mission: string;
+      coreValues: Array<{
+        title: string;
+        description: string;
+        icon: string;
+      }>;
+    };
+    
+    // Academics Page Content
+    academicsPage: {
+      pageTitle: string;
+      pageSubtitle: string;
+      primaryClasses: Array<{
+        range: string;
+        description: string;
+      }>;
+      higherSecondaryStreams: Array<{
+        name: string;
+        subjects: string[];
+        description: string;
+        color: string;
+      }>;
+      facilities: Array<{
+        name: string;
+        description: string;
+        icon: string;
+      }>;
+      academicStats: {
+        passRate: number;
+        higherEducationRate: number;
+        annualAwards: number;
+      };
+    };
+    
+    // Teachers and Events Data
+    teachers: Teacher[];
+    events: Event[];
+    galleryItems: GalleryItem[];
+    
+    // Contact Page Content
+    contactPage: {
+      pageTitle: string;
+      pageSubtitle: string;
+      address: {
+        line1: string;
+        line2: string;
+        line3: string;
+        pincode: string;
+      };
+      phones: string[];
+      emails: string[];
+      officeHours: {
+        weekdays: string;
+        saturday: string;
+        sunday: string;
+      };
+    };
   };
   updateContent: (newContent: Partial<ContentContextType['content']>) => void;
+  addTeacher: (teacher: Omit<Teacher, 'id'>) => void;
+  updateTeacher: (id: string, teacher: Partial<Teacher>) => void;
+  deleteTeacher: (id: string) => void;
+  addEvent: (event: Omit<Event, 'id'>) => void;
+  updateEvent: (id: string, event: Partial<Event>) => void;
+  deleteEvent: (id: string) => void;
+  addGalleryItem: (item: Omit<GalleryItem, 'id'>) => void;
+  deleteGalleryItem: (id: string) => void;
 }
 
 const ContentContext = createContext<ContentContextType | undefined>(undefined);
@@ -38,6 +147,7 @@ interface ContentProviderProps {
 
 export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
   const [content, setContent] = useState({
+    // Homepage Content
     welcomeMessage: `At Sarvodaya Higher Secondary School, we believe in the transformative power of education. 
       Under the guidance of the Kerala Jesuit Fathers, we have been nurturing young minds for 
       over five decades, providing not just academic excellence but also character formation 
@@ -65,6 +175,178 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       totalStudents: 1200,
       qualifiedTeachers: 45,
       annualEvents: 100
+    },
+    
+    // About Page Content
+    aboutPage: {
+      pageTitle: 'About Us',
+      pageSubtitle: 'Discover the rich history and values that make Sarvodaya Higher Secondary School a beacon of educational excellence in Wayanad.',
+      historyTitle: 'Our History',
+      historyContent: [
+        'Established in 1975, Sarvodaya Higher Secondary School has been a cornerstone of quality education in the scenic district of Wayanad. The school was founded with the vision of providing accessible, high-quality education to the rural communities of Kerala.',
+        'From humble beginnings with just 50 students, we have grown to become one of the most respected educational institutions in the region, serving over 1200 students from diverse backgrounds.',
+        'Our journey has been marked by consistent academic excellence, innovative teaching methodologies, and a commitment to holistic development that extends beyond textbooks to character formation and spiritual growth.'
+      ],
+      establishedYear: 1975,
+      currentStudents: 1200,
+      jesuitTitle: 'Jesuit Management',
+      jesuitContent: [
+        'The school is proudly managed by the Kerala Jesuit Fathers, who bring centuries of educational excellence and spiritual guidance to our institution. The Society of Jesus has been at the forefront of education worldwide, known for their commitment to academic rigor and character formation.',
+        'Under Jesuit guidance, our school follows the motto "Ad Majorem Dei Gloriam" (For the Greater Glory of God), ensuring that every student receives not just academic knowledge but also moral and spiritual development.'
+      ],
+      vision: 'To be a premier educational institution that transforms lives through excellence in academics, character formation, and spiritual development, creating compassionate leaders who serve society with integrity and wisdom.',
+      mission: 'To provide holistic education that integrates academic excellence with moral values, preparing students to be responsible citizens who contribute meaningfully to society while staying rooted in their cultural heritage.',
+      coreValues: [
+        {
+          title: 'Academic Excellence',
+          description: 'Commitment to highest standards of teaching and learning',
+          icon: 'BookOpen'
+        },
+        {
+          title: 'Compassion',
+          description: 'Caring for each student\'s individual needs and growth',
+          icon: 'Heart'
+        },
+        {
+          title: 'Service',
+          description: 'Developing leaders who serve others and transform society',
+          icon: 'Users'
+        }
+      ]
+    },
+    
+    // Academics Page Content
+    academicsPage: {
+      pageTitle: 'Academic Programs',
+      pageSubtitle: 'Comprehensive education from foundation to higher secondary levels, preparing students for success in academics and life.',
+      primaryClasses: [
+        { range: "Class 1-5", description: "Foundation years focusing on basic literacy, numeracy, and life skills" },
+        { range: "Class 6-8", description: "Middle school curriculum with introduction to specialized subjects" },
+        { range: "Class 9-10", description: "Secondary education preparing for board examinations" }
+      ],
+      higherSecondaryStreams: [
+        {
+          name: "Science Stream",
+          subjects: ["Physics", "Chemistry", "Mathematics", "Biology", "English", "Malayalam"],
+          description: "Comprehensive science education preparing students for medical and engineering careers",
+          color: "blue"
+        },
+        {
+          name: "Humanities Stream",
+          subjects: ["History", "Political Science", "Economics", "Geography", "English", "Malayalam"],
+          description: "Liberal arts education fostering critical thinking and social awareness",
+          color: "emerald"
+        }
+      ],
+      facilities: [
+        { name: "Science Laboratory", description: "Well-equipped labs for Physics, Chemistry, and Biology", icon: "Microscope" },
+        { name: "Computer Lab", description: "Modern computer facilities with internet connectivity", icon: "Calculator" },
+        { name: "Library", description: "Extensive collection of books and digital resources", icon: "BookOpen" },
+        { name: "Art Studio", description: "Creative space for artistic expression and learning", icon: "Palette" },
+        { name: "Music Room", description: "Dedicated space for music lessons and cultural activities", icon: "Music" },
+        { name: "Sports Ground", description: "Athletic facilities for physical education and sports", icon: "Globe" }
+      ],
+      academicStats: {
+        passRate: 95,
+        higherEducationRate: 80,
+        annualAwards: 50
+      }
+    },
+    
+    // Teachers Data
+    teachers: [
+      {
+        id: '1',
+        name: "Rev. Fr. Thomas Abraham",
+        designation: "Principal",
+        subjects: ["Administration", "Moral Science"],
+        experience: "25 years",
+        education: "M.A. Education, B.Ed.",
+        image: "https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        id: '2',
+        name: "Mrs. Priya Nair",
+        designation: "Vice Principal",
+        subjects: ["Mathematics", "Statistics"],
+        experience: "20 years",
+        education: "M.Sc. Mathematics, B.Ed.",
+        image: "https://images.pexels.com/photos/3823495/pexels-photo-3823495.jpeg?auto=compress&cs=tinysrgb&w=400"
+      },
+      {
+        id: '3',
+        name: "Mr. Rajesh Kumar",
+        designation: "Head of Science Department",
+        subjects: ["Physics", "Computer Science"],
+        experience: "18 years",
+        education: "M.Sc. Physics, B.Ed.",
+        image: "https://images.pexels.com/photos/5212317/pexels-photo-5212317.jpeg?auto=compress&cs=tinysrgb&w=400"
+      }
+    ],
+    
+    // Events Data
+    events: [
+      {
+        id: '1',
+        title: "Annual Science Exhibition",
+        date: "March 15, 2025",
+        time: "10:00 AM - 4:00 PM",
+        location: "School Auditorium",
+        description: "Students showcase their innovative science projects and experiments.",
+        image: "https://images.pexels.com/photos/2280547/pexels-photo-2280547.jpeg?auto=compress&cs=tinysrgb&w=600",
+        category: "Academic",
+        isUpcoming: true
+      },
+      {
+        id: '2',
+        title: "Sports Day Celebrations",
+        date: "March 28, 2025",
+        time: "8:00 AM - 5:00 PM",
+        location: "School Sports Ground",
+        description: "Annual athletic meet with various sports competitions and cultural programs.",
+        image: "https://images.pexels.com/photos/159581/rugby-sports-game-ball-159581.jpeg?auto=compress&cs=tinysrgb&w=600",
+        category: "Sports",
+        isUpcoming: true
+      }
+    ],
+    
+    // Gallery Data
+    galleryItems: [
+      {
+        id: '1',
+        type: 'image' as const,
+        src: 'https://images.pexels.com/photos/8926991/pexels-photo-8926991.jpeg?auto=compress&cs=tinysrgb&w=800',
+        thumbnail: 'https://images.pexels.com/photos/8926991/pexels-photo-8926991.jpeg?auto=compress&cs=tinysrgb&w=400',
+        title: 'Independence Day Celebration',
+        category: 'events'
+      },
+      {
+        id: '2',
+        type: 'image' as const,
+        src: 'https://images.pexels.com/photos/5427674/pexels-photo-5427674.jpeg?auto=compress&cs=tinysrgb&w=800',
+        thumbnail: 'https://images.pexels.com/photos/5427674/pexels-photo-5427674.jpeg?auto=compress&cs=tinysrgb&w=400',
+        title: 'Science Exhibition',
+        category: 'academic'
+      }
+    ],
+    
+    // Contact Page Content
+    contactPage: {
+      pageTitle: 'Contact Us',
+      pageSubtitle: 'We\'d love to hear from you. Get in touch with us for admissions, inquiries, or any questions about our school.',
+      address: {
+        line1: 'Sarvodaya Higher Secondary School',
+        line2: 'Eachome, Wayanad District',
+        line3: 'Kerala, India',
+        pincode: '673592'
+      },
+      phones: ['+91 493 622 3456', '+91 493 622 3457'],
+      emails: ['info@sarvodayahss.edu.in', 'principal@sarvodayahss.edu.in'],
+      officeHours: {
+        weekdays: 'Monday - Friday: 8:00 AM - 4:00 PM',
+        saturday: 'Saturday: 8:00 AM - 12:00 PM',
+        sunday: 'Sunday: Closed'
+      }
     }
   });
 
@@ -72,8 +354,82 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     setContent(prev => ({ ...prev, ...newContent }));
   };
 
+  const addTeacher = (teacher: Omit<Teacher, 'id'>) => {
+    const newTeacher = { ...teacher, id: Date.now().toString() };
+    setContent(prev => ({
+      ...prev,
+      teachers: [...prev.teachers, newTeacher]
+    }));
+  };
+
+  const updateTeacher = (id: string, updatedTeacher: Partial<Teacher>) => {
+    setContent(prev => ({
+      ...prev,
+      teachers: prev.teachers.map(teacher => 
+        teacher.id === id ? { ...teacher, ...updatedTeacher } : teacher
+      )
+    }));
+  };
+
+  const deleteTeacher = (id: string) => {
+    setContent(prev => ({
+      ...prev,
+      teachers: prev.teachers.filter(teacher => teacher.id !== id)
+    }));
+  };
+
+  const addEvent = (event: Omit<Event, 'id'>) => {
+    const newEvent = { ...event, id: Date.now().toString() };
+    setContent(prev => ({
+      ...prev,
+      events: [...prev.events, newEvent]
+    }));
+  };
+
+  const updateEvent = (id: string, updatedEvent: Partial<Event>) => {
+    setContent(prev => ({
+      ...prev,
+      events: prev.events.map(event => 
+        event.id === id ? { ...event, ...updatedEvent } : event
+      )
+    }));
+  };
+
+  const deleteEvent = (id: string) => {
+    setContent(prev => ({
+      ...prev,
+      events: prev.events.filter(event => event.id !== id)
+    }));
+  };
+
+  const addGalleryItem = (item: Omit<GalleryItem, 'id'>) => {
+    const newItem = { ...item, id: Date.now().toString() };
+    setContent(prev => ({
+      ...prev,
+      galleryItems: [...prev.galleryItems, newItem]
+    }));
+  };
+
+  const deleteGalleryItem = (id: string) => {
+    setContent(prev => ({
+      ...prev,
+      galleryItems: prev.galleryItems.filter(item => item.id !== id)
+    }));
+  };
+
   return (
-    <ContentContext.Provider value={{ content, updateContent }}>
+    <ContentContext.Provider value={{ 
+      content, 
+      updateContent, 
+      addTeacher, 
+      updateTeacher, 
+      deleteTeacher,
+      addEvent,
+      updateEvent,
+      deleteEvent,
+      addGalleryItem,
+      deleteGalleryItem
+    }}>
       {children}
     </ContentContext.Provider>
   );
