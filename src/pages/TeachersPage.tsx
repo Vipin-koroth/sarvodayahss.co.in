@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Award, BookOpen } from 'lucide-react';
+import { Mail, Award, BookOpen, Microscope, Calculator, Globe } from 'lucide-react';
 
 const TeachersPage = () => {
   const teachers = [
