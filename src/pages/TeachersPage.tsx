@@ -10,11 +10,15 @@ const TeachersPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Our Faculty</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{content.teachersPage.pageTitle}</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Meet our dedicated team of qualified educators who are committed to 
-            nurturing young minds and fostering academic excellence.
+            {content.teachersPage.pageSubtitle}
           </p>
+          {content.teachersPage.heroImage && (
+            <div className="mt-8">
+              <img src={content.teachersPage.heroImage} alt="Our Faculty" className="w-full h-64 object-cover rounded-xl shadow-lg mx-auto" />
+            </div>
+          )}
         </div>
 
         {/* Teachers Grid */}
@@ -69,7 +73,7 @@ const TeachersPage = () => {
         {/* Department Information */}
         <section className="mt-16">
           <div className="bg-white p-8 md:p-12 rounded-xl shadow-lg">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Our Departments</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">{content.teachersPage.departmentsTitle}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="text-center p-4">
                 <div className="bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">

@@ -32,11 +32,15 @@ const GalleryPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Photo & Video Gallery</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{content.galleryPage.pageTitle}</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Explore moments from our school life, events, and academic activities 
-            through our comprehensive gallery.
+            {content.galleryPage.pageSubtitle}
           </p>
+          {content.galleryPage.heroImage && (
+            <div className="mt-8">
+              <img src={content.galleryPage.heroImage} alt="Gallery" className="w-full h-64 object-cover rounded-xl shadow-lg mx-auto" />
+            </div>
+          )}
         </div>
 
         {/* Filter Buttons */}
@@ -129,6 +133,7 @@ const GalleryPage = () => {
 
         {/* Stats Section */}
         <div className="mt-16 bg-white p-8 rounded-xl shadow-lg">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">{content.galleryPage.statsTitle}</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl font-bold text-blue-800">500+</div>

@@ -24,11 +24,15 @@ const EventsPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Events & Activities</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{content.eventsPage.pageTitle}</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Stay updated with our school events, cultural programs, and academic activities 
-            throughout the year.
+            {content.eventsPage.pageSubtitle}
           </p>
+          {content.eventsPage.heroImage && (
+            <div className="mt-8">
+              <img src={content.eventsPage.heroImage} alt="Events & Activities" className="w-full h-64 object-cover rounded-xl shadow-lg mx-auto" />
+            </div>
+          )}
         </div>
 
         {/* Tab Navigation */}
@@ -114,9 +118,9 @@ const EventsPage = () => {
         {/* Call to Action */}
         <div className="mt-16 text-center">
           <div className="bg-gradient-to-r from-blue-800 to-emerald-800 text-white p-8 md:p-12 rounded-xl">
-            <h2 className="text-3xl font-bold mb-4">Stay Connected</h2>
+            <h2 className="text-3xl font-bold mb-4">{content.eventsPage.callToActionTitle}</h2>
             <p className="text-xl text-blue-100 mb-6">
-              Don't miss out on important school events and announcements.
+              {content.eventsPage.callToActionDescription}
             </p>
             <button className="bg-white text-blue-800 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition-colors duration-200">
               Subscribe to Updates

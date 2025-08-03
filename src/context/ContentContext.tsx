@@ -39,6 +39,12 @@ interface ContentContextType {
     visionStatement: string;
     heroImage: string;
     featuredImages: string[];
+    heroTitle: string;
+    heroSubtitle: string;
+    heroDescription: string;
+    quickStatsTitle: string;
+    exploreSectionTitle: string;
+    welcomeSectionTitle: string;
     transitionSettings: {
       heroTransition: string;
       cardTransitions: boolean;
@@ -55,12 +61,15 @@ interface ContentContextType {
     aboutPage: {
       pageTitle: string;
       pageSubtitle: string;
+      heroImage: string;
       historyTitle: string;
       historyContent: string[];
+      historyImage: string;
       establishedYear: number;
       currentStudents: number;
       jesuitTitle: string;
       jesuitContent: string[];
+      jesuitImage: string;
       vision: string;
       mission: string;
       coreValues: Array<{
@@ -68,12 +77,20 @@ interface ContentContextType {
         description: string;
         icon: string;
       }>;
+      coreValuesTitle: string;
+      coreValuesSubtitle: string;
     };
     
     // Academics Page Content
     academicsPage: {
       pageTitle: string;
       pageSubtitle: string;
+      heroImage: string;
+      primarySectionTitle: string;
+      higherSecondaryTitle: string;
+      facilitiesTitle: string;
+      excellenceTitle: string;
+      excellenceDescription: string;
       primaryClasses: Array<{
         range: string;
         description: string;
@@ -96,6 +113,31 @@ interface ContentContextType {
       };
     };
     
+    // Teachers Page Content
+    teachersPage: {
+      pageTitle: string;
+      pageSubtitle: string;
+      heroImage: string;
+      departmentsTitle: string;
+    };
+    
+    // Events Page Content
+    eventsPage: {
+      pageTitle: string;
+      pageSubtitle: string;
+      heroImage: string;
+      callToActionTitle: string;
+      callToActionDescription: string;
+    };
+    
+    // Gallery Page Content
+    galleryPage: {
+      pageTitle: string;
+      pageSubtitle: string;
+      heroImage: string;
+      statsTitle: string;
+    };
+    
     // Teachers and Events Data
     teachers: Teacher[];
     events: Event[];
@@ -105,6 +147,10 @@ interface ContentContextType {
     contactPage: {
       pageTitle: string;
       pageSubtitle: string;
+      heroImage: string;
+      contactInfoTitle: string;
+      contactFormTitle: string;
+      locationTitle: string;
       address: {
         line1: string;
         line2: string;
@@ -160,6 +206,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       promotes social justice, and empowers students to transform society through 
       knowledge, compassion, and service.`,
     heroImage: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    heroTitle: 'Sarvodaya Higher Secondary School',
+    heroSubtitle: 'Eachome, Wayanad District, Kerala',
+    heroDescription: 'A Kerala Government Aided Institution managed by the Kerala Jesuit Fathers, dedicated to providing excellence in education and nurturing young minds since 1975.',
+    quickStatsTitle: 'Our Achievements',
+    exploreSectionTitle: 'Explore Our School',
+    welcomeSectionTitle: 'Welcome to Sarvodaya Family',
     featuredImages: [
       'https://images.pexels.com/photos/8926991/pexels-photo-8926991.jpeg?auto=compress&cs=tinysrgb&w=800',
       'https://images.pexels.com/photos/5427674/pexels-photo-5427674.jpeg?auto=compress&cs=tinysrgb&w=800',
@@ -181,12 +233,14 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     aboutPage: {
       pageTitle: 'About Us',
       pageSubtitle: 'Discover the rich history and values that make Sarvodaya Higher Secondary School a beacon of educational excellence in Wayanad.',
+      heroImage: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200',
       historyTitle: 'Our History',
       historyContent: [
         'Established in 1975, Sarvodaya Higher Secondary School has been a cornerstone of quality education in the scenic district of Wayanad. The school was founded with the vision of providing accessible, high-quality education to the rural communities of Kerala.',
         'From humble beginnings with just 50 students, we have grown to become one of the most respected educational institutions in the region, serving over 1200 students from diverse backgrounds.',
         'Our journey has been marked by consistent academic excellence, innovative teaching methodologies, and a commitment to holistic development that extends beyond textbooks to character formation and spiritual growth.'
       ],
+      historyImage: 'https://images.pexels.com/photos/8926991/pexels-photo-8926991.jpeg?auto=compress&cs=tinysrgb&w=800',
       establishedYear: 1975,
       currentStudents: 1200,
       jesuitTitle: 'Jesuit Management',
@@ -194,8 +248,11 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         'The school is proudly managed by the Kerala Jesuit Fathers, who bring centuries of educational excellence and spiritual guidance to our institution. The Society of Jesus has been at the forefront of education worldwide, known for their commitment to academic rigor and character formation.',
         'Under Jesuit guidance, our school follows the motto "Ad Majorem Dei Gloriam" (For the Greater Glory of God), ensuring that every student receives not just academic knowledge but also moral and spiritual development.'
       ],
+      jesuitImage: 'https://images.pexels.com/photos/5427674/pexels-photo-5427674.jpeg?auto=compress&cs=tinysrgb&w=800',
       vision: 'To be a premier educational institution that transforms lives through excellence in academics, character formation, and spiritual development, creating compassionate leaders who serve society with integrity and wisdom.',
       mission: 'To provide holistic education that integrates academic excellence with moral values, preparing students to be responsible citizens who contribute meaningfully to society while staying rooted in their cultural heritage.',
+      coreValuesTitle: 'Our Core Values',
+      coreValuesSubtitle: 'The values that guide everything we do at Sarvodaya',
       coreValues: [
         {
           title: 'Academic Excellence',
@@ -219,6 +276,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     academicsPage: {
       pageTitle: 'Academic Programs',
       pageSubtitle: 'Comprehensive education from foundation to higher secondary levels, preparing students for success in academics and life.',
+      heroImage: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      primarySectionTitle: 'Primary & Secondary Education',
+      higherSecondaryTitle: 'Higher Secondary Education (Classes 11 & 12)',
+      facilitiesTitle: 'Academic Facilities',
+      excellenceTitle: 'Academic Excellence',
+      excellenceDescription: 'Our students consistently achieve outstanding results in board examinations, with many securing admissions to prestigious universities and professional courses.',
       primaryClasses: [
         { range: "Class 1-5", description: "Foundation years focusing on basic literacy, numeracy, and life skills" },
         { range: "Class 6-8", description: "Middle school curriculum with introduction to specialized subjects" },
@@ -251,6 +314,31 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         higherEducationRate: 80,
         annualAwards: 50
       }
+    },
+    
+    // Teachers Page Content
+    teachersPage: {
+      pageTitle: 'Our Faculty',
+      pageSubtitle: 'Meet our dedicated team of qualified educators who are committed to nurturing young minds and fostering academic excellence.',
+      heroImage: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      departmentsTitle: 'Our Departments',
+    },
+    
+    // Events Page Content
+    eventsPage: {
+      pageTitle: 'Events & Activities',
+      pageSubtitle: 'Stay updated with our school events, cultural programs, and academic activities throughout the year.',
+      heroImage: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      callToActionTitle: 'Stay Connected',
+      callToActionDescription: 'Don\'t miss out on important school events and announcements.',
+    },
+    
+    // Gallery Page Content
+    galleryPage: {
+      pageTitle: 'Photo & Video Gallery',
+      pageSubtitle: 'Explore moments from our school life, events, and academic activities through our comprehensive gallery.',
+      heroImage: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      statsTitle: 'Gallery Statistics',
     },
     
     // Teachers Data
@@ -334,6 +422,10 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     contactPage: {
       pageTitle: 'Contact Us',
       pageSubtitle: 'We\'d love to hear from you. Get in touch with us for admissions, inquiries, or any questions about our school.',
+      heroImage: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      contactInfoTitle: 'Get in Touch',
+      contactFormTitle: 'Send us a Message',
+      locationTitle: 'Location',
       address: {
         line1: 'Sarvodaya Higher Secondary School',
         line2: 'Eachome, Wayanad District',

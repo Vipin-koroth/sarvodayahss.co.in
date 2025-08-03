@@ -40,14 +40,13 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className={`text-center relative z-10 ${getTransitionClass('fadeIn')}`}>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Sarvodaya Higher Secondary School
+              {content.heroTitle}
             </h1>
             <p className="text-xl md:text-2xl mb-4 text-blue-100">
-              Eachome, Wayanad District, Kerala
+              {content.heroSubtitle}
             </p>
             <p className="text-lg mb-8 text-blue-100 max-w-3xl mx-auto">
-              A Kerala Government Aided Institution managed by the Kerala Jesuit Fathers, 
-              dedicated to providing excellence in education and nurturing young minds since 1975.
+              {content.heroDescription}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -92,6 +91,11 @@ const HomePage = () => {
       {/* Quick Stats */}
       <section className="py-16 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+              {content.quickStatsTitle}
+            </h2>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="bg-blue-800 text-white p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
@@ -129,7 +133,7 @@ const HomePage = () => {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
-            Explore Our School
+            {content.exploreSectionTitle}
           </h2>
           
           {/* Featured Images */}
@@ -196,7 +200,7 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
-              Welcome to Sarvodaya Family
+              {content.welcomeSectionTitle}
             </h2>
             <p className="text-lg text-gray-700 max-w-4xl mx-auto leading-relaxed">
               {content.welcomeMessage}

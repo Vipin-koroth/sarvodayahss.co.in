@@ -15,6 +15,11 @@ const AboutPage = () => {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             {aboutPage.pageSubtitle}
           </p>
+          {aboutPage.heroImage && (
+            <div className="mt-8">
+              <img src={aboutPage.heroImage} alt="About Us" className="w-full h-64 object-cover rounded-xl shadow-lg mx-auto" />
+            </div>
+          )}
         </div>
 
         {/* School History */}
@@ -30,18 +35,23 @@ const AboutPage = () => {
                 ))}
               </div>
             </div>
-            <div className="bg-gradient-to-br from-blue-50 to-emerald-50 p-8 rounded-xl">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-blue-800 mb-2">{aboutPage.establishedYear}</div>
-                <p className="text-gray-600 mb-4">Year Established</p>
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-emerald-800">50</div>
-                    <p className="text-sm text-gray-600">Years of Service</p>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-emerald-800">{aboutPage.currentStudents}+</div>
-                    <p className="text-sm text-gray-600">Current Students</p>
+            <div>
+              {aboutPage.historyImage && (
+                <img src={aboutPage.historyImage} alt="School History" className="w-full h-64 object-cover rounded-xl shadow-lg mb-6" />
+              )}
+              <div className="bg-gradient-to-br from-blue-50 to-emerald-50 p-8 rounded-xl">
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-blue-800 mb-2">{aboutPage.establishedYear}</div>
+                  <p className="text-gray-600 mb-4">Year Established</p>
+                  <div className="grid grid-cols-2 gap-4 text-center">
+                    <div>
+                      <div className="text-2xl font-bold text-emerald-800">50</div>
+                      <p className="text-sm text-gray-600">Years of Service</p>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-emerald-800">{aboutPage.currentStudents}+</div>
+                      <p className="text-sm text-gray-600">Current Students</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -55,6 +65,9 @@ const AboutPage = () => {
             <div className="text-center mb-8">
               <Church className="h-16 w-16 text-blue-800 mx-auto mb-4" />
               <h2 className="text-3xl font-bold text-gray-900 mb-4">{aboutPage.jesuitTitle}</h2>
+              {aboutPage.jesuitImage && (
+                <img src={aboutPage.jesuitImage} alt="Jesuit Management" className="w-full max-w-md h-48 object-cover rounded-xl shadow-lg mx-auto mb-6" />
+              )}
             </div>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
@@ -107,9 +120,9 @@ const AboutPage = () => {
         {/* Core Values */}
         <section>
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Core Values</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">{aboutPage.coreValuesTitle}</h2>
             <p className="text-lg text-gray-600">
-              The values that guide everything we do at Sarvodaya
+              {aboutPage.coreValuesSubtitle}
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">

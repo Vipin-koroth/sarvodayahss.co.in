@@ -15,11 +15,16 @@ const AcademicsPage = () => {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             {academicsPage.pageSubtitle}
           </p>
+          {academicsPage.heroImage && (
+            <div className="mt-8">
+              <img src={academicsPage.heroImage} alt="Academics" className="w-full h-64 object-cover rounded-xl shadow-lg mx-auto" />
+            </div>
+          )}
         </div>
 
         {/* Primary & Secondary Education */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Primary & Secondary Education</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">{academicsPage.primarySectionTitle}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {academicsPage.primaryClasses.map((classInfo, index) => (
               <div key={index} className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl">
@@ -32,7 +37,7 @@ const AcademicsPage = () => {
 
         {/* Higher Secondary Streams */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Higher Secondary Education (Classes 11 & 12)</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">{academicsPage.higherSecondaryTitle}</h2>
           <div className="grid md:grid-cols-2 gap-8">
             {academicsPage.higherSecondaryStreams.map((stream, index) => {
               const getIcon = (iconName: string) => {
@@ -81,7 +86,7 @@ const AcademicsPage = () => {
 
         {/* Academic Facilities */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Academic Facilities</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">{academicsPage.facilitiesTitle}</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {academicsPage.facilities.map((facility, index) => {
               const getIcon = (iconName: string) => {
@@ -110,10 +115,9 @@ const AcademicsPage = () => {
         {/* Academic Excellence */}
         <section>
           <div className="bg-gradient-to-r from-blue-800 to-emerald-800 text-white p-8 md:p-12 rounded-xl text-center">
-            <h2 className="text-3xl font-bold mb-6">Academic Excellence</h2>
+            <h2 className="text-3xl font-bold mb-6">{academicsPage.excellenceTitle}</h2>
             <p className="text-xl text-blue-100 mb-8 max-w-4xl mx-auto">
-              Our students consistently achieve outstanding results in board examinations, 
-              with many securing admissions to prestigious universities and professional courses.
+              {academicsPage.excellenceDescription}
             </p>
             <div className="grid md:grid-cols-3 gap-8">
               <div>

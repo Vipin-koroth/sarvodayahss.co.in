@@ -38,12 +38,17 @@ const ContactPage = () => {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             {contactPage.pageSubtitle}
           </p>
+          {contactPage.heroImage && (
+            <div className="mt-8">
+              <img src={contactPage.heroImage} alt="Contact Us" className="w-full h-64 object-cover rounded-xl shadow-lg mx-auto" />
+            </div>
+          )}
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Information */}
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">Get in Touch</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">{contactPage.contactInfoTitle}</h2>
             
             <div className="space-y-6">
               <div className="flex items-start space-x-4">
@@ -99,7 +104,7 @@ const ContactPage = () => {
 
             {/* Google Maps Placeholder */}
             <div className="mt-8">
-              <h3 className="font-semibold text-gray-900 mb-4">Location</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">{contactPage.locationTitle}</h3>
               <div className="bg-gray-200 h-64 rounded-xl flex items-center justify-center">
                 <div className="text-center">
                   <MapPin className="h-12 w-12 text-gray-500 mx-auto mb-2" />
@@ -113,7 +118,7 @@ const ContactPage = () => {
           {/* Contact Form */}
           <div>
             <div className="bg-white p-8 rounded-xl shadow-lg">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">Send us a Message</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">{contactPage.contactFormTitle}</h2>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
