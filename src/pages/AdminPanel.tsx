@@ -30,7 +30,9 @@ const AdminPanel = () => {
     deleteGalleryItem,
     addAdministration,
     updateAdministration,
-    deleteAdministration
+    deleteAdministration,
+    uploadVideo,
+    deleteVideo
   } = useContent();
   
   const [activeSection, setActiveSection] = useState('homepage');
@@ -66,6 +68,7 @@ const AdminPanel = () => {
     designation: '',
     image: ''
   });
+  const [uploadingVideo, setUploadingVideo] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
