@@ -200,7 +200,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       over five decades, providing not just academic excellence but also character formation 
       and spiritual growth. Our commitment to the Jesuit tradition of "men and women for others" 
       shapes every aspect of our educational approach.`,
-    logoImage: 'https://images.pexels.com/photos/207692/pexels-photo-207692.jpeg?auto=compress&cs=tinysrgb&w=200',
+    logoImage: '/Sravodaya_Small.png',
     missionStatement: `To provide quality education rooted in Jesuit values, fostering intellectual, 
       moral, and spiritual development of students while preparing them to be 
       responsible citizens and leaders of tomorrow.`,
