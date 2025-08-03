@@ -7,7 +7,6 @@ import {
   BookOpen, 
   Image as ImageIcon, 
   Phone,
-  Upload,
   Plus,
   Trash2,
   Edit3
