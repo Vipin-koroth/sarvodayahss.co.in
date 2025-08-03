@@ -96,9 +96,9 @@ const HomePage = () => {
               {content.administrationTitle}
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 justify-items-center">
+          <div className="flex flex-wrap justify-center gap-8 max-w-4xl mx-auto">
             {content.administration.map((admin, index) => (
-              <div key={admin.id} className="text-center flex flex-col items-center">
+              <div key={admin.id} className="text-center flex flex-col items-center w-40">
                 <div className="relative mb-4">
                   <img
                     src={admin.image}
