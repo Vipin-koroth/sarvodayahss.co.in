@@ -5,7 +5,6 @@ import {
   Home, 
   Info, 
   BookOpen, 
-  Calendar, 
   Image as ImageIcon, 
   Phone,
   Save,
@@ -14,7 +13,7 @@ import {
   Trash2,
   Edit3
 } from 'lucide-react';
-
+  Save as SaveIcon,
 const AdminPanel = () => {
   const { 
     content, 
