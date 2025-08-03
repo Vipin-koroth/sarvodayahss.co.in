@@ -212,6 +212,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       and spiritual growth. Our commitment to the Jesuit tradition of "men and women for others" 
       shapes every aspect of our educational approach.`,
     logoImage: '/Sravodaya_Small.png',
+    bannerEnabled: true,
+    bannerTitle: 'Welcome to Sarvodaya HSS',
+    bannerMessage: 'Admissions Open for Academic Year 2025-26',
+    bannerButtonText: 'Apply Now',
+    bannerButtonLink: '/contact',
+    bannerType: 'info', // info, success, warning, error
     missionStatement: `To provide quality education rooted in Jesuit values, fostering intellectual, 
       moral, and spiritual development of students while preparing them to be 
       responsible citizens and leaders of tomorrow.`,
@@ -219,7 +225,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       promotes social justice, and empowers students to transform society through 
       knowledge, compassion, and service.`,
     heroImage: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    heroVideo: '',
+    heroVideo: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
     heroTitle: 'Sarvodaya Higher Secondary School',
     heroSubtitle: 'Eachome, Wayanad District, Kerala',
     heroDescription: 'A Kerala Government Aided Institution managed by the Kerala Jesuit Fathers, dedicated to providing excellence in education and nurturing young minds since 1975.',
