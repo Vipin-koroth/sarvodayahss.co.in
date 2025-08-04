@@ -1870,27 +1870,12 @@ const AdminPanel = () => {
                     <div className="p-3">
                       <h4 className="font-semibold text-sm">{item.title}</h4>
                       <p className="text-xs text-gray-600 capitalize">{item.category} - {item.type}</p>
-                      {content.logoImage && content.logoImage.trim() !== '' && (
-                        <div className="mb-2">
-                          <img 
-                            src={content.logoImage} 
-                            alt="Current Logo" 
-                            className="h-16 w-16 rounded-full object-cover border-2 border-gray-300"
-                            onError={(e) => {
-                              console.log('Logo preview failed:', content.logoImage);
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                          <p className="text-xs text-gray-500 mt-1">Current Logo</p>
-                        </div>
-                      )}
                       <button
                         onClick={() => deleteGalleryItem(item.id)}
                         className="mt-2 bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs transition-colors duration-200"
                       >
                         Delete
                       </button>
-                      <p className="text-xs text-gray-500">Upload a new logo (JPEG, PNG, GIF, WebP - Max 5MB)</p>
                     </div>
                   </div>
                 ))}
@@ -1918,6 +1903,21 @@ const AdminPanel = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="https://example.com/logo.png"
                   />
+                  {content.logoImage && content.logoImage.trim() !== '' && (
+                    <div className="mb-2">
+                      <img 
+                        src={content.logoImage} 
+                        alt="Current Logo" 
+                        className="h-16 w-16 rounded-full object-cover border-2 border-gray-300"
+                        onError={(e) => {
+                          console.log('Logo preview failed:', content.logoImage);
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Current Logo</p>
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-500">Upload a new logo (JPEG, PNG, GIF, WebP - Max 5MB)</p>
                 </div>
                 
                 <div>
