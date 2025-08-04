@@ -13,7 +13,8 @@ import {
   Upload,
   Plus,
   Trash2,
-  Edit3
+  Edit3,
+  Video
 } from 'lucide-react';
 
 const AdminPanel = () => {
@@ -36,6 +37,7 @@ const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState('homepage');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [newTeacher, setNewTeacher] = useState({
     name: '',
     designation: '',
@@ -83,6 +85,43 @@ const AdminPanel = () => {
       updateContent({ [field]: imageUrl });
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check file size (50MB limit)
+      if (file.size > 50 * 1024 * 1024) {
+        alert('File size must be less than 50MB');
+        return;
+      }
+
+      // Check file type
+      if (!file.type.startsWith('video/')) {
+        alert('Please select a valid video file');
+        return;
+      }
+
+      // Simulate file upload with progress
+      setUploadProgress(0);
+      const reader = new FileReader();
+      
+      reader.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
+          setUploadProgress(progress);
+        }
+      };
+      
+      reader.onload = (event) => {
+        const videoUrl = event.target?.result as string;
+        updateContent({ heroVideo: videoUrl });
+        setUploadProgress(100);
+        setTimeout(() => setUploadProgress(0), 2000);
+      };
+      
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleNestedUpdate = (section: string, field: string, value: any) => {
@@ -1791,18 +1830,54 @@ const AdminPanel = () => {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hero Video URL (Optional)
+                    Hero Video URL
                   </label>
                   <input
                     type="url"
-                    value={content.heroVideo}
+                    value={content.heroVideo || ''}
                     onChange={(e) => updateContent({ heroVideo: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="https://example.com/video.mp4"
                   />
-                  <p className="text-sm text-gray-500 mt-1">
-                    If provided, video will play instead of background image
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Or upload a video file below</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Upload Video File
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={handleVideoUpload}
+                      className="hidden"
+                      id="video-upload"
+                    />
+                    <label
+                      htmlFor="video-upload"
+                      className="cursor-pointer flex flex-col items-center"
+                    >
+                      <Video className="h-12 w-12 text-gray-400 mb-2" />
+                      <span className="text-sm text-gray-600">
+                        Click to upload video file
+                      </span>
+                      <span className="text-xs text-gray-500 mt-1">
+                        MP4, WebM, or OGV (Max 50MB)
+                      </span>
+                    </label>
+                  </div>
+                  {uploadProgress > 0 && uploadProgress < 100 && (
+                    <div className="mt-2">
+                      <div className="bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${uploadProgress}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-1">Uploading... {uploadProgress}%</p>
+                    </div>
+                  )}
                 </div>
 
                 <div>
