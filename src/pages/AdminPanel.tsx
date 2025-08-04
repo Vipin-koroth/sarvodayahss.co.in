@@ -2375,6 +2375,206 @@ const AdminPanel = () => {
                 </div>
               </div>
             </div>
+
+            {/* Poster/Popup Settings */}
+            <section className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Poster/Popup Settings</h2>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="flex items-center space-x-3 mb-4">
+                    <input
+                      type="checkbox"
+                      checked={formData.posterSettings?.enabled || false}
+                      onChange={(e) => handleNestedChange('posterSettings', 'enabled', e.target.checked)}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="font-medium text-gray-700">Enable Poster Popup</span>
+                  </label>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Poster Title
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.posterSettings?.title || ''}
+                        onChange={(e) => handleNestedChange('posterSettings', 'title', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Welcome to Sarvodaya HSS"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Poster Message
+                      </label>
+                      <textarea
+                        value={formData.posterSettings?.message || ''}
+                        onChange={(e) => handleNestedChange('posterSettings', 'message', e.target.value)}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Your announcement message..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Poster Image
+                      </label>
+                      <div className="flex space-x-2">
+                        <input
+                          type="text"
+                          value={formData.posterSettings?.image || ''}
+                          onChange={(e) => handleNestedChange('posterSettings', 'image', e.target.value)}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Image URL or upload..."
+                        />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageUpload(e, (url) => handleNestedChange('posterSettings', 'image', url))}
+                          className="hidden"
+                          id="poster-image-upload"
+                        />
+                        <label
+                          htmlFor="poster-image-upload"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"
+                        >
+                          Upload
+                        </label>
+                      </div>
+                      {formData.posterSettings?.image && (
+                        <img
+                          src={formData.posterSettings.image}
+                          alt="Poster preview"
+                          className="mt-2 w-32 h-20 object-cover rounded border"
+                        />
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Button Text
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.posterSettings?.buttonText || ''}
+                          onChange={(e) => handleNestedChange('posterSettings', 'buttonText', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Apply Now"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Button Link
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.posterSettings?.buttonLink || ''}
+                          onChange={(e) => handleNestedChange('posterSettings', 'buttonLink', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="/contact or https://..."
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">Display Options</label>
+                    <div className="space-y-3">
+                      <label className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          checked={formData.posterSettings?.showOnce || false}
+                          onChange={(e) => handleNestedChange('posterSettings', 'showOnce', e.target.checked)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Show only once per visitor</span>
+                      </label>
+
+                      <label className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          checked={formData.posterSettings?.autoClose || false}
+                          onChange={(e) => handleNestedChange('posterSettings', 'autoClose', e.target.checked)}
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Auto-close after delay</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {formData.posterSettings?.autoClose && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Auto-close Delay (seconds)
+                      </label>
+                      <input
+                        type="number"
+                        min="3"
+                        max="60"
+                        value={formData.posterSettings?.autoCloseDelay || 10}
+                        onChange={(e) => handleNestedChange('posterSettings', 'autoCloseDelay', parseInt(e.target.value))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Overlay Style
+                    </label>
+                    <select
+                      value={formData.posterSettings?.overlayColor || 'dark'}
+                      onChange={(e) => handleNestedChange('posterSettings', 'overlayColor', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="dark">Dark Overlay</option>
+                      <option value="light">Light Overlay</option>
+                      <option value="blur">Blur Effect</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Position
+                    </label>
+                    <select
+                      value={formData.posterSettings?.position || 'center'}
+                      onChange={(e) => handleNestedChange('posterSettings', 'position', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="center">Center</option>
+                      <option value="top">Top</option>
+                      <option value="bottom">Bottom</option>
+                    </select>
+                  </div>
+
+                  <div className="bg-yellow-50 p-4 rounded-lg">
+                    <h4 className="font-medium text-yellow-800 mb-2">Preview Actions</h4>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        localStorage.removeItem('sarvodaya-poster-shown');
+                        window.location.reload();
+                      }}
+                      className="text-sm bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded"
+                    >
+                      Reset & Preview Poster
+                    </button>
+                    <p className="text-xs text-yellow-700 mt-2">
+                      This will reset the "show once" setting and reload the page to preview the poster.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         );
 
