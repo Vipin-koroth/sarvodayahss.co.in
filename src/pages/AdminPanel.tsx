@@ -1,2495 +1,365 @@
 import React, { useState } from 'react';
 import { useContent } from '../context/ContentContext';
-import { 
-  Settings, 
-  Home, 
-  Info, 
-  BookOpen, 
-  Users, 
-  Calendar, 
-  Image as ImageIcon, 
-  Phone,
-  Save,
-  Upload,
-  Plus,
-  Trash2,
-  Edit3,
-  Video
-} from 'lucide-react';
+import { Save, Upload, Eye, RotateCcw } from 'lucide-react';
 
 const AdminPanel = () => {
-  const { 
-    content, 
-    updateContent, 
-    addTeacher, 
-    updateTeacher, 
-    deleteTeacher,
-    addEvent,
-    updateEvent,
-    deleteEvent,
-    addGalleryItem,
-    deleteGalleryItem,
-    addAdministration,
-    updateAdministration,
-    deleteAdministration
-  } = useContent();
-  
-  const [activeSection, setActiveSection] = useState('homepage');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [uploadingVideo, setUploadingVideo] = useState(false);
-  const [newTeacher, setNewTeacher] = useState({
-    name: '',
-    designation: '',
-    subjects: '',
-    experience: '',
-    education: '',
-    image: ''
-  });
-  const [newEvent, setNewEvent] = useState({
-    title: '',
-    date: '',
-    time: '',
-    location: '',
-    description: '',
-    image: '',
-    category: 'Academic',
-    isUpcoming: true
-  });
-  const [newGalleryItem, setNewGalleryItem] = useState({
-    type: 'image' as const,
-    src: '',
-    thumbnail: '',
-    title: '',
-    category: 'academic'
-  });
-  const [newAdmin, setNewAdmin] = useState({
-    name: '',
-    designation: '',
-    image: ''
-  });
+  const { content, updateContent } = useContent();
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [unsavedCount, setUnsavedCount] = useState(0);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (credentials.username === 'admin' && credentials.password === 'sarvodaya2025') {
-      setIsAuthenticated(true);
-    } else {
-      alert('Invalid credentials');
-    }
-  };
-
-  const handleImageUpload = (field: string, file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const imageUrl = e.target?.result as string;
-      updateContent({ [field]: imageUrl });
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleNestedUpdate = (section: string, field: string, value: any) => {
-    updateContent({
-      [section]: {
-        ...content[section as keyof typeof content],
-        [field]: value
-      }
-    });
-  };
-
-  const handleArrayUpdate = (section: string, field: string, index: number, value: string) => {
-    const currentArray = (content[section as keyof typeof content] as any)[field];
-    const newArray = [...currentArray];
-    newArray[index] = value;
-    handleNestedUpdate(section, field, newArray);
-  };
-
-  const addArrayItem = (section: string, field: string, defaultValue: string = '') => {
-    const currentArray = (content[section as keyof typeof content] as any)[field];
-    const newArray = [...currentArray, defaultValue];
-    handleNestedUpdate(section, field, newArray);
-  };
-
-  const removeArrayItem = (section: string, field: string, index: number) => {
-    const currentArray = (content[section as keyof typeof content] as any)[field];
-    const newArray = currentArray.filter((_: any, i: number) => i !== index);
-    handleNestedUpdate(section, field, newArray);
-  };
-
-  const handleTeacherSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const subjects = newTeacher.subjects.split(',').map(s => s.trim());
-    addTeacher({ ...newTeacher, subjects });
-    setNewTeacher({ name: '', designation: '', subjects: '', experience: '', education: '', image: '' });
-  };
-
-  const handleEventSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addEvent(newEvent);
-    setNewEvent({
-      title: '',
-      date: '',
-      time: '',
-      location: '',
-      description: '',
-      image: '',
-      category: 'Academic',
-      isUpcoming: true
-    });
-  };
-
-  const handleGallerySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addGalleryItem(newGalleryItem);
-    setNewGalleryItem({
-      type: 'image' as const,
-      src: '',
-      thumbnail: '',
-      title: '',
-      category: 'academic'
-    });
-  };
-
-  const handleAdminSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addAdministration(newAdmin);
-    setNewAdmin({ name: '', designation: '', image: '' });
-  };
-
-  const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg'];
-    if (!allowedTypes.includes(file.type)) {
-      alert('Please upload a valid video file (MP4, WebM, or OGG)');
-      return;
-    }
-
-    // Validate file size (50MB limit)
-    const maxSize = 50 * 1024 * 1024; // 50MB in bytes
-    if (file.size > maxSize) {
-      alert('Video file size must be less than 50MB');
-      return;
-    }
-
-    setUploadingVideo(true);
-
-    try {
-      // Create a URL for the uploaded file
-      const videoUrl = URL.createObjectURL(file);
-      
-      // Create a file name with timestamp to avoid conflicts
-      const timestamp = Date.now();
-      const fileName = `hero-video-${timestamp}.${file.name.split('.').pop()}`;
-      
-      // In a real application, you would upload to your server/cloud storage
-      // For now, we'll use the object URL and store the file reference
+  const handleInputChange = (field: string, value: any, section?: string) => {
+    if (section) {
       updateContent({
-        heroVideo: videoUrl,
-        heroVideoFileName: fileName
+        ...content,
+        [section]: {
+          ...content[section as keyof typeof content],
+          [field]: value
+        }
       });
-
-      alert('Video uploaded successfully! Note: In production, this should be uploaded to a proper file server.');
-    } catch (error) {
-      console.error('Error uploading video:', error);
-      alert('Error uploading video. Please try again.');
-    } finally {
-      setUploadingVideo(false);
-      // Reset the input
-      event.target.value = '';
+    } else {
+      updateContent({
+        ...content,
+        [field]: value
+      });
+    }
+    
+    if (!hasUnsavedChanges) {
+      setHasUnsavedChanges(true);
+      setUnsavedCount(prev => prev + 1);
     }
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
-          <h1 className="text-2xl font-bold text-center mb-6">Admin Login</h1>
-          <form onSubmit={handleLogin}>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
-              <input
-                type="text"
-                value={credentials.username}
-                onChange={(e) => setCredentials({...credentials, username: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-              <input
-                type="password"
-                value={credentials.password}
-                onChange={(e) => setCredentials({...credentials, password: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
-            >
-              Login
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
+  const handleSave = async () => {
+    setSaveStatus('saving');
+    
+    // Simulate save process
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    setHasUnsavedChanges(false);
+    setUnsavedCount(0);
+    setSaveStatus('saved');
+    
+    // Auto-hide success message after 3 seconds
+    setTimeout(() => {
+      setSaveStatus('idle');
+    }, 3000);
+  };
 
-  const sidebarItems = [
-    { key: 'homepage', label: 'Homepage', icon: Home },
-    { key: 'about', label: 'About Page', icon: Info },
-    { key: 'academics', label: 'Academics Page', icon: BookOpen },
-    { key: 'teachers-page', label: 'Teachers Page', icon: Users },
-    { key: 'events-page', label: 'Events Page', icon: Calendar },
-    { key: 'gallery-page', label: 'Gallery Page', icon: ImageIcon },
-    { key: 'contact', label: 'Contact Page', icon: Phone },
-    { key: 'teachers', label: 'Manage Staff', icon: Users },
-    { key: 'events', label: 'Manage Events', icon: Calendar },
-    { key: 'gallery', label: 'Manage Gallery', icon: ImageIcon },
-    { key: 'settings', label: 'Settings', icon: Settings },
-  ];
+  const handleImageUpload = (field: string, section?: string) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const imageUrl = e.target?.result as string;
+          handleInputChange(field, imageUrl, section);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  };
 
-  const renderHomepageEditor = () => (
-    <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-gray-900">Homepage Content</h2>
-      
-      {/* Hero Section */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Hero Section</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Title</label>
-            <input
-              type="text"
-              value={content.heroTitle}
-              onChange={(e) => updateContent({ heroTitle: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Subtitle</label>
-            <input
-              type="text"
-              value={content.heroSubtitle}
-              onChange={(e) => updateContent({ heroSubtitle: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Description</label>
-            <textarea
-              value={content.heroDescription}
-              onChange={(e) => updateContent({ heroDescription: e.target.value })}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Background Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleImageUpload('heroImage', file);
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-            {content.heroImage && (
-              <img src={content.heroImage} alt="Hero" className="mt-2 h-32 w-full object-cover rounded" />
-            )}
-          </div>
+  const resetPosterPreview = () => {
+    // Clear the "seen" flag from localStorage to allow preview
+    localStorage.removeItem('posterSeen');
+    // Trigger a page reload to show the poster
+    window.location.reload();
+  };
 
-          {/* Hero Video Section */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Video</label>
-            
-            {/* Current Video Display */}
-            {content.heroVideo && (
-              <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">Current Video:</span>
-                  <button
-                    onClick={() => updateContent({ heroVideo: '', heroVideoFileName: '' })}
-                    className="text-red-600 hover:text-red-800 text-sm"
-                  >
-                    Remove Video
-                  </button>
-                </div>
-                <div className="bg-black rounded-lg overflow-hidden">
-                  <video
-                    src={content.heroVideo}
-                    className="w-full h-32 object-cover"
-                    controls
-                    muted
-                  />
-                </div>
-                {content.heroVideoFileName && (
-                  <p className="text-xs text-gray-500 mt-1">File: {content.heroVideoFileName}</p>
-                )}
-              </div>
-            )}
+  const getSaveButtonText = () => {
+    switch (saveStatus) {
+      case 'saving': return 'Saving...';
+      case 'saved': return 'Saved ✓';
+      case 'error': return 'Error ✗';
+      default: return 'Save Changes';
+    }
+  };
 
-            {/* Upload Options */}
-            <div className="space-y-4">
-              {/* File Upload */}
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-2">Upload Video File</label>
-                <div className="flex items-center space-x-4">
-                  <label className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition-colors">
-                    <Upload className="h-4 w-4 mr-2" />
-                    {uploadingVideo ? 'Uploading...' : 'Choose Video File'}
-                    <input
-                      type="file"
-                      accept="video/mp4,video/webm,video/ogg"
-                      onChange={handleVideoUpload}
-                      disabled={uploadingVideo}
-                      className="hidden"
-                    />
-                  </label>
-                  <span className="text-xs text-gray-500">Max 50MB (MP4, WebM, OGG)</span>
-                </div>
-              </div>
-
-              {/* URL Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-2">Or Enter Video URL</label>
-                <input
-                  type="url"
-                  value={content.heroVideo?.startsWith('blob:') ? '' : (content.heroVideo || '')}
-                  onChange={(e) => updateContent({ heroVideo: e.target.value, heroVideoFileName: '' })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="https://example.com/video.mp4"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Direct video URL (MP4, WebM) or embedded video URL (YouTube, Vimeo)
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Administration Section Title</label>
-            <input
-              type="text"
-              value={content.administrationTitle}
-              onChange={(e) => updateContent({ administrationTitle: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Section Titles */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Section Titles</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Quick Stats Title</label>
-            <input
-              type="text"
-              value={content.quickStatsTitle}
-              onChange={(e) => updateContent({ quickStatsTitle: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Explore Section Title</label>
-            <input
-              type="text"
-              value={content.exploreSectionTitle}
-              onChange={(e) => updateContent({ exploreSectionTitle: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Welcome Section Title</label>
-            <input
-              type="text"
-              value={content.welcomeSectionTitle}
-              onChange={(e) => updateContent({ welcomeSectionTitle: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Mission & Vision */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Mission & Vision</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Mission Statement</label>
-            <textarea
-              value={content.missionStatement}
-              onChange={(e) => updateContent({ missionStatement: e.target.value })}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Vision Statement</label>
-            <textarea
-              value={content.visionStatement}
-              onChange={(e) => updateContent({ visionStatement: e.target.value })}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Welcome Message</label>
-            <textarea
-              value={content.welcomeMessage}
-              onChange={(e) => updateContent({ welcomeMessage: e.target.value })}
-              rows={6}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Featured Images */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Featured Images</h3>
-        
-        <div className="space-y-4">
-          {content.featuredImages.map((image, index) => (
-            <div key={index} className="flex items-center space-x-4">
-              <img src={image} alt={`Featured ${index + 1}`} className="h-20 w-20 object-cover rounded" />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                      const newImages = [...content.featuredImages];
-                      newImages[index] = e.target?.result as string;
-                      updateContent({ featuredImages: newImages });
-                    };
-                    reader.readAsDataURL(file);
-                  }
-                }}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md"
-              />
-              <button
-                onClick={() => {
-                  const newImages = content.featuredImages.filter((_, i) => i !== index);
-                  updateContent({ featuredImages: newImages });
-                }}
-                className="text-red-600 hover:text-red-800"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
-            </div>
-          ))}
-          
-          <button
-            onClick={() => {
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.accept = 'image/*';
-              input.onchange = (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    const newImages = [...content.featuredImages, e.target?.result as string];
-                    updateContent({ featuredImages: newImages });
-                  };
-                  reader.readAsDataURL(file);
-                }
-              };
-              input.click();
-            }}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add Featured Image</span>
-          </button>
-        </div>
-      </div>
-
-      {/* School Statistics */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">School Statistics</h3>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Years of Excellence</label>
-            <input
-              type="number"
-              value={content.schoolStats.yearsOfExcellence}
-              onChange={(e) => updateContent({ 
-                schoolStats: { ...content.schoolStats, yearsOfExcellence: parseInt(e.target.value) }
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Total Students</label>
-            <input
-              type="number"
-              value={content.schoolStats.totalStudents}
-              onChange={(e) => updateContent({ 
-                schoolStats: { ...content.schoolStats, totalStudents: parseInt(e.target.value) }
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Qualified Teachers</label>
-            <input
-              type="number"
-              value={content.schoolStats.qualifiedTeachers}
-              onChange={(e) => updateContent({ 
-                schoolStats: { ...content.schoolStats, qualifiedTeachers: parseInt(e.target.value) }
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Annual Events</label>
-            <input
-              type="number"
-              value={content.schoolStats.annualEvents}
-              onChange={(e) => updateContent({ 
-                schoolStats: { ...content.schoolStats, annualEvents: parseInt(e.target.value) }
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderAboutPageEditor = () => (
-    <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-gray-900">About Page Content</h2>
-      
-      {/* Page Header */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Page Header</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
-            <input
-              type="text"
-              value={content.aboutPage.pageTitle}
-              onChange={(e) => handleNestedUpdate('aboutPage', 'pageTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
-            <textarea
-              value={content.aboutPage.pageSubtitle}
-              onChange={(e) => handleNestedUpdate('aboutPage', 'pageSubtitle', e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    handleNestedUpdate('aboutPage', 'heroImage', e.target?.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-            {content.aboutPage.heroImage && (
-              <img src={content.aboutPage.heroImage} alt="About Hero" className="mt-2 h-32 w-full object-cover rounded" />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* History Section */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">History Section</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">History Title</label>
-            <input
-              type="text"
-              value={content.aboutPage.historyTitle}
-              onChange={(e) => handleNestedUpdate('aboutPage', 'historyTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">History Content</label>
-            {content.aboutPage.historyContent.map((paragraph, index) => (
-              <div key={index} className="flex items-start space-x-2 mb-2">
-                <textarea
-                  value={paragraph}
-                  onChange={(e) => handleArrayUpdate('aboutPage', 'historyContent', index, e.target.value)}
-                  rows={3}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  onClick={() => removeArrayItem('aboutPage', 'historyContent', index)}
-                  className="text-red-600 hover:text-red-800 mt-2"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-            <button
-              onClick={() => addArrayItem('aboutPage', 'historyContent', 'New paragraph...')}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add Paragraph</span>
-            </button>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">History Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    handleNestedUpdate('aboutPage', 'historyImage', e.target?.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-            {content.aboutPage.historyImage && (
-              <img src={content.aboutPage.historyImage} alt="History" className="mt-2 h-32 w-full object-cover rounded" />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Jesuit Management Section */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Jesuit Management Section</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Jesuit Title</label>
-            <input
-              type="text"
-              value={content.aboutPage.jesuitTitle}
-              onChange={(e) => handleNestedUpdate('aboutPage', 'jesuitTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Jesuit Content</label>
-            {content.aboutPage.jesuitContent.map((paragraph, index) => (
-              <div key={index} className="flex items-start space-x-2 mb-2">
-                <textarea
-                  value={paragraph}
-                  onChange={(e) => handleArrayUpdate('aboutPage', 'jesuitContent', index, e.target.value)}
-                  rows={3}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  onClick={() => removeArrayItem('aboutPage', 'jesuitContent', index)}
-                  className="text-red-600 hover:text-red-800 mt-2"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-            <button
-              onClick={() => addArrayItem('aboutPage', 'jesuitContent', 'New paragraph...')}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add Paragraph</span>
-            </button>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Jesuit Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    handleNestedUpdate('aboutPage', 'jesuitImage', e.target?.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-            {content.aboutPage.jesuitImage && (
-              <img src={content.aboutPage.jesuitImage} alt="Jesuit" className="mt-2 h-32 w-full object-cover rounded" />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Vision & Mission */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Vision & Mission</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Vision</label>
-            <textarea
-              value={content.aboutPage.vision}
-              onChange={(e) => handleNestedUpdate('aboutPage', 'vision', e.target.value)}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Mission</label>
-            <textarea
-              value={content.aboutPage.mission}
-              onChange={(e) => handleNestedUpdate('aboutPage', 'mission', e.target.value)}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Core Values */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Core Values Section</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Core Values Title</label>
-            <input
-              type="text"
-              value={content.aboutPage.coreValuesTitle}
-              onChange={(e) => handleNestedUpdate('aboutPage', 'coreValuesTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Core Values Subtitle</label>
-            <input
-              type="text"
-              value={content.aboutPage.coreValuesSubtitle}
-              onChange={(e) => handleNestedUpdate('aboutPage', 'coreValuesSubtitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Core Values</label>
-            {content.aboutPage.coreValues.map((value, index) => (
-              <div key={index} className="border p-4 rounded-md mb-4">
-                <div className="grid grid-cols-1 gap-2">
-                  <input
-                    type="text"
-                    placeholder="Title"
-                    value={value.title}
-                    onChange={(e) => {
-                      const newValues = [...content.aboutPage.coreValues];
-                      newValues[index] = { ...value, title: e.target.value };
-                      handleNestedUpdate('aboutPage', 'coreValues', newValues);
-                    }}
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <textarea
-                    placeholder="Description"
-                    value={value.description}
-                    onChange={(e) => {
-                      const newValues = [...content.aboutPage.coreValues];
-                      newValues[index] = { ...value, description: e.target.value };
-                      handleNestedUpdate('aboutPage', 'coreValues', newValues);
-                    }}
-                    rows={2}
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <select
-                    value={value.icon}
-                    onChange={(e) => {
-                      const newValues = [...content.aboutPage.coreValues];
-                      newValues[index] = { ...value, icon: e.target.value };
-                      handleNestedUpdate('aboutPage', 'coreValues', newValues);
-                    }}
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="BookOpen">BookOpen</option>
-                    <option value="Heart">Heart</option>
-                    <option value="Users">Users</option>
-                  </select>
-                </div>
-                <button
-                  onClick={() => {
-                    const newValues = content.aboutPage.coreValues.filter((_, i) => i !== index);
-                    handleNestedUpdate('aboutPage', 'coreValues', newValues);
-                  }}
-                  className="mt-2 text-red-600 hover:text-red-800"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-            <button
-              onClick={() => {
-                const newValues = [...content.aboutPage.coreValues, { title: '', description: '', icon: 'BookOpen' }];
-                handleNestedUpdate('aboutPage', 'coreValues', newValues);
-              }}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add Core Value</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderAcademicsPageEditor = () => (
-    <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-gray-900">Academics Page Content</h2>
-      
-      {/* Page Header */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Page Header</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
-            <input
-              type="text"
-              value={content.academicsPage.pageTitle}
-              onChange={(e) => handleNestedUpdate('academicsPage', 'pageTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
-            <textarea
-              value={content.academicsPage.pageSubtitle}
-              onChange={(e) => handleNestedUpdate('academicsPage', 'pageSubtitle', e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    handleNestedUpdate('academicsPage', 'heroImage', e.target?.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-            {content.academicsPage.heroImage && (
-              <img src={content.academicsPage.heroImage} alt="Academics Hero" className="mt-2 h-32 w-full object-cover rounded" />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Section Titles */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Section Titles</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Primary Section Title</label>
-            <input
-              type="text"
-              value={content.academicsPage.primarySectionTitle}
-              onChange={(e) => handleNestedUpdate('academicsPage', 'primarySectionTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Higher Secondary Title</label>
-            <input
-              type="text"
-              value={content.academicsPage.higherSecondaryTitle}
-              onChange={(e) => handleNestedUpdate('academicsPage', 'higherSecondaryTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Facilities Title</label>
-            <input
-              type="text"
-              value={content.academicsPage.facilitiesTitle}
-              onChange={(e) => handleNestedUpdate('academicsPage', 'facilitiesTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Excellence Title</label>
-            <input
-              type="text"
-              value={content.academicsPage.excellenceTitle}
-              onChange={(e) => handleNestedUpdate('academicsPage', 'excellenceTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Excellence Description</label>
-            <textarea
-              value={content.academicsPage.excellenceDescription}
-              onChange={(e) => handleNestedUpdate('academicsPage', 'excellenceDescription', e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Academic Statistics */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Academic Statistics</h3>
-        
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Pass Rate (%)</label>
-            <input
-              type="number"
-              value={content.academicsPage.academicStats.passRate}
-              onChange={(e) => handleNestedUpdate('academicsPage', 'academicStats', {
-                ...content.academicsPage.academicStats,
-                passRate: parseInt(e.target.value)
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Higher Education Rate (%)</label>
-            <input
-              type="number"
-              value={content.academicsPage.academicStats.higherEducationRate}
-              onChange={(e) => handleNestedUpdate('academicsPage', 'academicStats', {
-                ...content.academicsPage.academicStats,
-                higherEducationRate: parseInt(e.target.value)
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Annual Awards</label>
-            <input
-              type="number"
-              value={content.academicsPage.academicStats.annualAwards}
-              onChange={(e) => handleNestedUpdate('academicsPage', 'academicStats', {
-                ...content.academicsPage.academicStats,
-                annualAwards: parseInt(e.target.value)
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderTeachersPageEditor = () => (
-    <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-gray-900">Teachers Page Content</h2>
-      
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Page Settings</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
-            <input
-              type="text"
-              value={content.teachersPage.pageTitle}
-              onChange={(e) => handleNestedUpdate('teachersPage', 'pageTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
-            <textarea
-              value={content.teachersPage.pageSubtitle}
-              onChange={(e) => handleNestedUpdate('teachersPage', 'pageSubtitle', e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Departments Title</label>
-            <input
-              type="text"
-              value={content.teachersPage.departmentsTitle}
-              onChange={(e) => handleNestedUpdate('teachersPage', 'departmentsTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    handleNestedUpdate('teachersPage', 'heroImage', e.target?.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-            {content.teachersPage.heroImage && (
-              <img src={content.teachersPage.heroImage} alt="Teachers Hero" className="mt-2 h-32 w-full object-cover rounded" />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderEventsPageEditor = () => (
-    <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-gray-900">Events Page Content</h2>
-      
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Page Settings</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
-            <input
-              type="text"
-              value={content.eventsPage.pageTitle}
-              onChange={(e) => handleNestedUpdate('eventsPage', 'pageTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
-            <textarea
-              value={content.eventsPage.pageSubtitle}
-              onChange={(e) => handleNestedUpdate('eventsPage', 'pageSubtitle', e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Call to Action Title</label>
-            <input
-              type="text"
-              value={content.eventsPage.callToActionTitle}
-              onChange={(e) => handleNestedUpdate('eventsPage', 'callToActionTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Call to Action Description</label>
-            <textarea
-              value={content.eventsPage.callToActionDescription}
-              onChange={(e) => handleNestedUpdate('eventsPage', 'callToActionDescription', e.target.value)}
-              rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    handleNestedUpdate('eventsPage', 'heroImage', e.target?.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-            {content.eventsPage.heroImage && (
-              <img src={content.eventsPage.heroImage} alt="Events Hero" className="mt-2 h-32 w-full object-cover rounded" />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderGalleryPageEditor = () => (
-    <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-gray-900">Gallery Page Content</h2>
-      
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Page Settings</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
-            <input
-              type="text"
-              value={content.galleryPage.pageTitle}
-              onChange={(e) => handleNestedUpdate('galleryPage', 'pageTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
-            <textarea
-              value={content.galleryPage.pageSubtitle}
-              onChange={(e) => handleNestedUpdate('galleryPage', 'pageSubtitle', e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Stats Title</label>
-            <input
-              type="text"
-              value={content.galleryPage.statsTitle}
-              onChange={(e) => handleNestedUpdate('galleryPage', 'statsTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    handleNestedUpdate('galleryPage', 'heroImage', e.target?.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-            {content.galleryPage.heroImage && (
-              <img src={content.galleryPage.heroImage} alt="Gallery Hero" className="mt-2 h-32 w-full object-cover rounded" />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderContactPageEditor = () => (
-    <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-gray-900">Contact Page Content</h2>
-      
-      {/* Page Header */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Page Header</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
-            <input
-              type="text"
-              value={content.contactPage.pageTitle}
-              onChange={(e) => handleNestedUpdate('contactPage', 'pageTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
-            <textarea
-              value={content.contactPage.pageSubtitle}
-              onChange={(e) => handleNestedUpdate('contactPage', 'pageSubtitle', e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    handleNestedUpdate('contactPage', 'heroImage', e.target?.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                }
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-            {content.contactPage.heroImage && (
-              <img src={content.contactPage.heroImage} alt="Contact Hero" className="mt-2 h-32 w-full object-cover rounded" />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Section Titles */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Section Titles</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Contact Info Title</label>
-            <input
-              type="text"
-              value={content.contactPage.contactInfoTitle}
-              onChange={(e) => handleNestedUpdate('contactPage', 'contactInfoTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Contact Form Title</label>
-            <input
-              type="text"
-              value={content.contactPage.contactFormTitle}
-              onChange={(e) => handleNestedUpdate('contactPage', 'contactFormTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Location Title</label>
-            <input
-              type="text"
-              value={content.contactPage.locationTitle}
-              onChange={(e) => handleNestedUpdate('contactPage', 'locationTitle', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Contact Information */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
-        
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 1</label>
-            <input
-              type="text"
-              value={content.contactPage.address.line1}
-              onChange={(e) => handleNestedUpdate('contactPage', 'address', {
-                ...content.contactPage.address,
-                line1: e.target.value
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 2</label>
-            <input
-              type="text"
-              value={content.contactPage.address.line2}
-              onChange={(e) => handleNestedUpdate('contactPage', 'address', {
-                ...content.contactPage.address,
-                line2: e.target.value
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 3</label>
-            <input
-              type="text"
-              value={content.contactPage.address.line3}
-              onChange={(e) => handleNestedUpdate('contactPage', 'address', {
-                ...content.contactPage.address,
-                line3: e.target.value
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
-            <input
-              type="text"
-              value={content.contactPage.address.pincode}
-              onChange={(e) => handleNestedUpdate('contactPage', 'address', {
-                ...content.contactPage.address,
-                pincode: e.target.value
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Phone Numbers</label>
-            {content.contactPage.phones.map((phone, index) => (
-              <div key={index} className="flex items-center space-x-2 mb-2">
-                <input
-                  type="text"
-                  value={phone}
-                  onChange={(e) => handleArrayUpdate('contactPage', 'phones', index, e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  onClick={() => removeArrayItem('contactPage', 'phones', index)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-            <button
-              onClick={() => addArrayItem('contactPage', 'phones', '+91 ')}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add Phone</span>
-            </button>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email Addresses</label>
-            {content.contactPage.emails.map((email, index) => (
-              <div key={index} className="flex items-center space-x-2 mb-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => handleArrayUpdate('contactPage', 'emails', index, e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  onClick={() => removeArrayItem('contactPage', 'emails', index)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-            <button
-              onClick={() => addArrayItem('contactPage', 'emails', '')}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add Email</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderContent = () => {
-    switch (activeSection) {
-      case 'homepage':
-        return renderHomepageEditor();
-      case 'about':
-        return renderAboutPageEditor();
-      case 'academics':
-        return renderAcademicsPageEditor();
-      case 'teachers-page':
-        return renderTeachersPageEditor();
-      case 'events-page':
-        return renderEventsPageEditor();
-      case 'gallery-page':
-        return renderGalleryPageEditor();
-      case 'contact':
-        return renderContactPageEditor();
-      case 'teachers':
-        return (
-          <div className="space-y-8">
-            <h2 className="text-2xl font-bold text-gray-900">Manage Staff</h2>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Staff Page Content</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
-                  <input
-                    type="text"
-                    value={content.teachersPage.pageTitle}
-                    onChange={(e) => updateContent({ 
-                      teachersPage: { ...content.teachersPage, pageTitle: e.target.value }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
-                  <textarea
-                    value={content.teachersPage.pageSubtitle}
-                    onChange={(e) => updateContent({ 
-                      teachersPage: { ...content.teachersPage, pageSubtitle: e.target.value }
-                    })}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Add New Staff Member</h3>
-              <form onSubmit={handleTeacherSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Staff Name</label>
-                    <input
-                      type="text"
-                      required
-                      value={newTeacher.name}
-                      onChange={(e) => setNewTeacher({ ...newTeacher, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Designation</label>
-                    <input
-                      type="text"
-                      required
-                      value={newTeacher.designation}
-                      onChange={(e) => setNewTeacher({ ...newTeacher, designation: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Subjects (comma-separated)</label>
-                    <input
-                      type="text"
-                      required
-                      value={newTeacher.subjects}
-                      onChange={(e) => setNewTeacher({ ...newTeacher, subjects: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Experience</label>
-                    <input
-                      type="text"
-                      required
-                      value={newTeacher.experience}
-                      onChange={(e) => setNewTeacher({ ...newTeacher, experience: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Education</label>
-                    <input
-                      type="text"
-                      required
-                      value={newTeacher.education}
-                      onChange={(e) => setNewTeacher({ ...newTeacher, education: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Staff Photo URL</label>
-                    <input
-                      type="url"
-                      required
-                      value={newTeacher.image}
-                      onChange={(e) => setNewTeacher({ ...newTeacher, image: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
-                >
-                  Add Staff Member
-                </button>
-              </form>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Existing Staff Members</h3>
-              <div className="space-y-4">
-                {content.teachers.map((teacher) => (
-                  <div key={teacher.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <img src={teacher.image} alt={teacher.name} className="w-12 h-12 rounded-full object-cover" />
-                      <div>
-                        <h4 className="font-semibold">{teacher.name}</h4>
-                        <p className="text-sm text-gray-600">{teacher.designation}</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => deleteTeacher(teacher.id)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Delete Staff Member
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'events':
-        return (
-          <div className="space-y-8">
-            <h2 className="text-2xl font-bold text-gray-900">Manage Events</h2>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Events Page Content</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
-                  <input
-                    type="text"
-                    value={content.eventsPage.pageTitle}
-                    onChange={(e) => updateContent({ 
-                      eventsPage: { ...content.eventsPage, pageTitle: e.target.value }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
-                  <textarea
-                    value={content.eventsPage.pageSubtitle}
-                    onChange={(e) => updateContent({ 
-                      eventsPage: { ...content.eventsPage, pageSubtitle: e.target.value }
-                    })}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Add New Event</h3>
-              <form onSubmit={handleEventSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Event Title</label>
-                    <input
-                      type="text"
-                      required
-                      value={newEvent.title}
-                      onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                    <input
-                      type="text"
-                      required
-                      value={newEvent.date}
-                      onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-                      placeholder="March 15, 2025"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Time</label>
-                    <input
-                      type="text"
-                      required
-                      value={newEvent.time}
-                      onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
-                      placeholder="10:00 AM - 4:00 PM"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                    <input
-                      type="text"
-                      required
-                      value={newEvent.location}
-                      onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                    <select
-                      value={newEvent.category}
-                      onChange={(e) => setNewEvent({ ...newEvent, category: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="Academic">Academic</option>
-                      <option value="Sports">Sports</option>
-                      <option value="Cultural">Cultural</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                    <select
-                      value={newEvent.isUpcoming ? 'upcoming' : 'past'}
-                      onChange={(e) => setNewEvent({ ...newEvent, isUpcoming: e.target.value === 'upcoming' })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="upcoming">Upcoming</option>
-                      <option value="past">Past</option>
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                  <textarea
-                    required
-                    value={newEvent.description}
-                    onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Event Image URL</label>
-                  <input
-                    type="url"
-                    required
-                    value={newEvent.image}
-                    onChange={(e) => setNewEvent({ ...newEvent, image: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
-                >
-                  Add Event
-                </button>
-              </form>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Existing Events</h3>
-              <div className="space-y-4">
-                {content.events.map((event) => (
-                  <div key={event.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <img src={event.image} alt={event.title} className="w-12 h-12 rounded object-cover" />
-                      <div>
-                        <h4 className="font-semibold">{event.title}</h4>
-                        <p className="text-sm text-gray-600">{event.date} - {event.category}</p>
-                        <span className={`text-xs px-2 py-1 rounded ${event.isUpcoming ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                          {event.isUpcoming ? 'Upcoming' : 'Past'}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => deleteEvent(event.id)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200"
-                    >
-                      Delete Event
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'gallery':
-        return (
-          <div className="space-y-8">
-            <h2 className="text-2xl font-bold text-gray-900">Manage Gallery</h2>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Gallery Page Content</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
-                  <input
-                    type="text"
-                    value={content.galleryPage.pageTitle}
-                    onChange={(e) => updateContent({ 
-                      galleryPage: { ...content.galleryPage, pageTitle: e.target.value }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Page Subtitle</label>
-                  <textarea
-                    value={content.galleryPage.pageSubtitle}
-                    onChange={(e) => updateContent({ 
-                      galleryPage: { ...content.galleryPage, pageSubtitle: e.target.value }
-                    })}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Add New Gallery Item</h3>
-              <form onSubmit={handleGallerySubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                    <input
-                      type="text"
-                      required
-                      value={newGalleryItem.title}
-                      onChange={(e) => setNewGalleryItem({ ...newGalleryItem, title: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
-                    <select
-                      value={newGalleryItem.type}
-                      onChange={(e) => setNewGalleryItem({ ...newGalleryItem, type: e.target.value as 'image' | 'video' })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="image">Image</option>
-                      <option value="video">Video</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                    <select
-                      value={newGalleryItem.category}
-                      onChange={(e) => setNewGalleryItem({ ...newGalleryItem, category: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="academic">Academic</option>
-                      <option value="cultural">Cultural</option>
-                      <option value="sports">Sports</option>
-                      <option value="events">Events</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Source URL</label>
-                    <input
-                      type="url"
-                      required
-                      value={newGalleryItem.src}
-                      onChange={(e) => setNewGalleryItem({ ...newGalleryItem, src: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Thumbnail URL</label>
-                  <input
-                    type="url"
-                    required
-                    value={newGalleryItem.thumbnail}
-                    onChange={(e) => setNewGalleryItem({ ...newGalleryItem, thumbnail: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
-                >
-                  Add Gallery Item
-                </button>
-              </form>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Existing Gallery Items</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {content.galleryItems.map((item) => (
-                  <div key={item.id} className="border border-gray-200 rounded-lg overflow-hidden">
-                    <img src={item.thumbnail} alt={item.title} className="w-full h-32 object-cover" />
-                    <div className="p-3">
-                      <h4 className="font-semibold text-sm">{item.title}</h4>
-                      <p className="text-xs text-gray-600 capitalize">{item.category} - {item.type}</p>
-                      <button
-                        onClick={() => deleteGalleryItem(item.id)}
-                        className="mt-2 bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs transition-colors duration-200"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'settings':
-        return (
-          <div className="space-y-8">
-            <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">School Information</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Logo URL
-                  </label>
-                  <input
-                    type="url"
-                    value={content.logoImage}
-                    onChange={(e) => updateContent({ logoImage: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/logo.png"
-                  />
-                  {content.logoImage && content.logoImage.trim() !== '' && (
-                    <div className="mb-2">
-                      <img 
-                        src={content.logoImage} 
-                        alt="Current Logo" 
-                        className="h-16 w-16 rounded-full object-cover border-2 border-gray-300"
-                        onError={(e) => {
-                          console.log('Logo preview failed:', content.logoImage);
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Current Logo</p>
-                    </div>
-                  )}
-                  <p className="text-xs text-gray-500">Upload a new logo (JPEG, PNG, GIF, WebP - Max 5MB)</p>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hero Video URL (Optional)
-                  </label>
-                  <input
-                    type="url"
-                    value={content.heroVideo}
-                    onChange={(e) => updateContent({ heroVideo: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/video.mp4"
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    If provided, video will play instead of background image
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Google Maps Embed URL
-                  </label>
-                  <input
-                    type="url"
-                    value={content.contactPage.mapUrl}
-                    onChange={(e) => updateContent({
-                      contactPage: { ...content.contactPage, mapUrl: e.target.value }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Paste Google Maps embed URL here"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Get embed URL: Google Maps → Share → Embed a map → Copy HTML → Extract src URL
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Welcome Message
-                  </label>
-                  <textarea
-                    value={content.welcomeMessage}
-                    onChange={(e) => updateContent({ welcomeMessage: e.target.value })}
-                    rows={6}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">School Statistics</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Years of Excellence</label>
-                  <input
-                    type="number"
-                    value={content.schoolStats.yearsOfExcellence}
-                    onChange={(e) => updateContent({ 
-                      schoolStats: { ...content.schoolStats, yearsOfExcellence: parseInt(e.target.value) }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Total Students</label>
-                  <input
-                    type="number"
-                    value={content.schoolStats.totalStudents}
-                    onChange={(e) => updateContent({ 
-                      schoolStats: { ...content.schoolStats, totalStudents: parseInt(e.target.value) }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Qualified Teachers</label>
-                  <input
-                    type="number"
-                    value={content.schoolStats.qualifiedTeachers}
-                    onChange={(e) => updateContent({ 
-                      schoolStats: { ...content.schoolStats, qualifiedTeachers: parseInt(e.target.value) }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Annual Events</label>
-                  <input
-                    type="number"
-                    value={content.schoolStats.annualEvents}
-                    onChange={(e) => updateContent({ 
-                      schoolStats: { ...content.schoolStats, annualEvents: parseInt(e.target.value) }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 1</label>
-                  <input
-                    type="text"
-                    value={content.contactPage.address.line1}
-                    onChange={(e) => updateContent({ 
-                      contactPage: { 
-                        ...content.contactPage, 
-                        address: { ...content.contactPage.address, line1: e.target.value }
-                      }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 2</label>
-                  <input
-                    type="text"
-                    value={content.contactPage.address.line2}
-                    onChange={(e) => updateContent({ 
-                      contactPage: { 
-                        ...content.contactPage, 
-                        address: { ...content.contactPage.address, line2: e.target.value }
-                      }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
-                    <input
-                      type="text"
-                      value={content.contactPage.address.line3}
-                      onChange={(e) => updateContent({ 
-                        contactPage: { 
-                          ...content.contactPage, 
-                          address: { ...content.contactPage.address, line3: e.target.value }
-                        }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
-                    <input
-                      type="text"
-                      value={content.contactPage.address.pincode}
-                      onChange={(e) => updateContent({ 
-                        contactPage: { 
-                          ...content.contactPage, 
-                          address: { ...content.contactPage.address, pincode: e.target.value }
-                        }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Poster/Popup Settings */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Poster/Popup Settings</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={content.posterSettings.enabled}
-                      onChange={(e) => updateContent({ 
-                        posterSettings: { ...content.posterSettings, enabled: e.target.checked }
-                      })}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm font-medium text-gray-700">Enable Poster</span>
-                  </label>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Poster Image URL</label>
-                  <input
-                    type="url"
-                    value={content.posterSettings.image}
-                    onChange={(e) => updateContent({ 
-                      posterSettings: { ...content.posterSettings, image: e.target.value }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/poster-image.jpg"
-                  />
-                  {content.posterSettings.image && (
-                      <img 
-                        src={content.posterSettings.image} 
-                        alt="Poster Preview" 
-                        className="w-48 h-32 object-cover rounded border"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Poster Preview</p>
-                    )}
-                </div>
-                
-                <div>
-                  <label className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={content.posterSettings.showOnce}
-                      onChange={(e) => updateContent({ 
-                        posterSettings: { ...content.posterSettings, showOnce: e.target.checked }
-                      })}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-sm font-medium text-gray-700">Show only once per visitor</span>
-                  </label>
-                </div>
-                
-                <div className="pt-4 border-t border-gray-200">
-                  <button
-                    onClick={() => {
-                      localStorage.removeItem('sarvodaya-poster-shown');
-                      window.location.reload();
-                    }}
-                    className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                  >
-                    Reset & Preview Poster
-                  </button>
-                  <p className="text-xs text-gray-500 mt-2">This will clear the "shown once" flag and reload the page to preview the poster</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Footer Settings */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Footer Settings</h3>
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* School Info */}
-                <div className="space-y-4">
-                  <h4 className="font-semibold text-gray-800">School Information</h4>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">School Name</label>
-                    <input
-                      type="text"
-                      value={content.footerContent.schoolName}
-                      onChange={(e) => updateContent({
-                        footerContent: {
-                          ...content.footerContent,
-                          schoolName: e.target.value
-                        }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Tagline</label>
-                    <input
-                      type="text"
-                      value={content.footerContent.tagline}
-                      onChange={(e) => updateContent({
-                        footerContent: {
-                          ...content.footerContent,
-                          tagline: e.target.value
-                        }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                    <textarea
-                      value={content.footerContent.description}
-                      onChange={(e) => updateContent({
-                        footerContent: {
-                          ...content.footerContent,
-                          description: e.target.value
-                        }
-                      })}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-                
-                {/* Contact Info */}
-                <div className="space-y-4">
-                  <h4 className="font-semibold text-gray-800">Contact Information</h4>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                    <input
-                      type="text"
-                      value={content.footerContent.phone}
-                      onChange={(e) => updateContent({
-                        footerContent: {
-                          ...content.footerContent,
-                          phone: e.target.value
-                        }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input
-                      type="email"
-                      value={content.footerContent.email}
-                      onChange={(e) => updateContent({
-                        footerContent: {
-                          ...content.footerContent,
-                          email: e.target.value
-                        }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              {/* Address */}
-              <div className="mt-6">
-                <h4 className="font-semibold text-gray-800 mb-4">Address</h4>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 1</label>
-                    <input
-                      type="text"
-                      value={content.footerContent.address.line1}
-                      onChange={(e) => updateContent({
-                        footerContent: {
-                          ...content.footerContent,
-                          address: {
-                            ...content.footerContent.address,
-                            line1: e.target.value
-                          }
-                        }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 2</label>
-                    <input
-                      type="text"
-                      value={content.footerContent.address.line2}
-                      onChange={(e) => updateContent({
-                        footerContent: {
-                          ...content.footerContent,
-                          address: {
-                            ...content.footerContent.address,
-                            line2: e.target.value
-                          }
-                        }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 3</label>
-                    <input
-                      type="text"
-                      value={content.footerContent.address.line3}
-                      onChange={(e) => updateContent({
-                        footerContent: {
-                          ...content.footerContent,
-                          address: {
-                            ...content.footerContent.address,
-                            line3: e.target.value
-                          }
-                        }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
-                    <input
-                      type="text"
-                      value={content.footerContent.address.pincode}
-                      onChange={(e) => updateContent({
-                        footerContent: {
-                          ...content.footerContent,
-                          address: {
-                            ...content.footerContent.address,
-                            pincode: e.target.value
-                          }
-                        }
-                      })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              {/* Quick Links */}
-              <div className="mt-6">
-                <h4 className="font-semibold text-gray-800 mb-4">Quick Links</h4>
-                <div className="space-y-3">
-                  {content.footerContent.quickLinks.map((link, index) => (
-                    <div key={index} className="grid md:grid-cols-3 gap-3 items-center">
-                      <input
-                        type="text"
-                        placeholder="Link Name"
-                        value={link.name}
-                        onChange={(e) => {
-                          const updatedLinks = [...content.footerContent.quickLinks];
-                          updatedLinks[index] = { ...link, name: e.target.value };
-                          updateContent({
-                            footerContent: {
-                              ...content.footerContent,
-                              quickLinks: updatedLinks
-                            }
-                          });
-                        }}
-                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <input
-                        type="text"
-                        placeholder="URL"
-                        value={link.url}
-                        onChange={(e) => {
-                          const updatedLinks = [...content.footerContent.quickLinks];
-                          updatedLinks[index] = { ...link, url: e.target.value };
-                          updateContent({
-                            footerContent: {
-                              ...content.footerContent,
-                              quickLinks: updatedLinks
-                            }
-                          });
-                        }}
-                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <div className="flex items-center space-x-2">
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={link.isExternal}
-                            onChange={(e) => {
-                              const updatedLinks = [...content.footerContent.quickLinks];
-                              updatedLinks[index] = { ...link, isExternal: e.target.checked };
-                              updateContent({
-                                footerContent: {
-                                  ...content.footerContent,
-                                  quickLinks: updatedLinks
-                                }
-                              });
-                            }}
-                            className="mr-2"
-                          />
-                          External
-                        </label>
-                        <button
-                          onClick={() => {
-                            const updatedLinks = content.footerContent.quickLinks.filter((_, i) => i !== index);
-                            updateContent({
-                              footerContent: {
-                                ...content.footerContent,
-                                quickLinks: updatedLinks
-                              }
-                            });
-                          }}
-                          className="text-red-600 hover:text-red-800 text-sm"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  <button
-                    onClick={() => {
-                      const newLink = { name: '', url: '', isExternal: false };
-                      updateContent({
-                        footerContent: {
-                          ...content.footerContent,
-                          quickLinks: [...content.footerContent.quickLinks, newLink]
-                        }
-                      });
-                    }}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm"
-                  >
-                    Add Quick Link
-                  </button>
-                </div>
-              </div>
-              
-              {/* Copyright & Management */}
-              <div className="mt-6 grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Copyright Text</label>
-                  <input
-                    type="text"
-                    value={content.footerContent.copyrightText}
-                    onChange={(e) => updateContent({
-                      footerContent: {
-                        ...content.footerContent,
-                        copyrightText: e.target.value
-                      }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Management Text</label>
-                  <input
-                    type="text"
-                    value={content.footerContent.managementText}
-                    onChange={(e) => updateContent({
-                      footerContent: {
-                        ...content.footerContent,
-                        managementText: e.target.value
-                      }
-                    })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      default:
-        return <div>Select a section to edit</div>;
+  const getSaveButtonColor = () => {
+    switch (saveStatus) {
+      case 'saving': return 'bg-yellow-500 hover:bg-yellow-600';
+      case 'saved': return 'bg-green-500 hover:bg-green-600';
+      case 'error': return 'bg-red-500 hover:bg-red-600';
+      default: return 'bg-blue-500 hover:bg-blue-600';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="flex">
-        {/* Sidebar */}
-        <div className="w-64 bg-white shadow-lg min-h-screen">
-          <div className="p-6">
-            <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
-            <p className="text-sm text-gray-600">Content Management</p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Status Bar */}
+      {(hasUnsavedChanges || saveStatus !== 'idle') && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              {hasUnsavedChanges && (
+                <div className="flex items-center space-x-2 text-yellow-600">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium">
+                    {unsavedCount} unsaved change{unsavedCount !== 1 ? 's' : ''}
+                  </span>
+                </div>
+              )}
+              {saveStatus === 'saved' && (
+                <div className="flex items-center space-x-2 text-green-600">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm font-medium">All changes saved</span>
+                </div>
+              )}
+            </div>
+            {hasUnsavedChanges && (
+              <button
+                onClick={handleSave}
+                disabled={saveStatus === 'saving'}
+                className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors ${getSaveButtonColor()}`}
+              >
+                <Save className="w-4 h-4 inline mr-2" />
+                {getSaveButtonText()}
+              </button>
+            )}
           </div>
-          
-          <nav className="mt-6">
-            {sidebarItems.map((item) => {
-              const IconComponent = item.icon;
-              return (
-                <button
-                  key={item.key}
-                  onClick={() => setActiveSection(item.key)}
-                  className={`w-full flex items-center space-x-3 px-6 py-3 text-left transition-colors duration-200 ${
-                    activeSection === item.key
-                      ? 'bg-blue-800 text-white border-r-4 border-blue-600'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <IconComponent className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
-          </nav>
         </div>
+      )}
 
-        {/* Main Content */}
-        <div className="flex-1 p-8">
-          {renderContent()}
+      <div className={`max-w-7xl mx-auto p-6 ${hasUnsavedChanges || saveStatus !== 'idle' ? 'pt-20' : ''}`}>
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-8 flex items-center">
+            <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
+              <span className="text-white font-bold">A</span>
+            </div>
+            Admin Panel
+          </h1>
+
+          {/* School Information */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-2">School Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">School Name</label>
+                <input
+                  type="text"
+                  value={content.schoolName}
+                  onChange={(e) => handleInputChange('schoolName', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter school name"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">School Logo</label>
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => handleImageUpload('logoImage')}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload Logo
+                  </button>
+                  {content.logoImage && (
+                    <img
+                      src={content.logoImage}
+                      alt="Logo Preview"
+                      className="w-12 h-12 object-contain border rounded"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Hero Section */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-2">Hero Section</h2>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Hero Title</label>
+                <input
+                  type="text"
+                  value={content.heroTitle}
+                  onChange={(e) => handleInputChange('heroTitle', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter hero title"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Hero Subtitle</label>
+                <textarea
+                  value={content.heroSubtitle}
+                  onChange={(e) => handleInputChange('heroSubtitle', e.target.value)}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter hero subtitle"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Hero Video URL</label>
+                <input
+                  type="url"
+                  value={content.heroVideoUrl}
+                  onChange={(e) => handleInputChange('heroVideoUrl', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter video URL (YouTube, Vimeo, or Google Drive)"
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  Supports YouTube, Vimeo, Google Drive, or direct video file URLs
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Poster/Popup Settings */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-2">Poster/Popup Settings</h2>
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="enablePoster"
+                  checked={content.posterSettings.enabled}
+                  onChange={(e) => handleInputChange('enabled', e.target.checked, 'posterSettings')}
+                  className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <label htmlFor="enablePoster" className="text-sm font-medium text-gray-700">
+                  Enable Poster
+                </label>
+              </div>
+              
+              {content.posterSettings.enabled && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Poster Image URL</label>
+                    <input
+                      type="url"
+                      value={content.posterSettings.image}
+                      onChange={(e) => handleInputChange('image', e.target.value, 'posterSettings')}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Enter poster image URL"
+                    />
+                  </div>
+                  
+                  {content.posterSettings.image && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Preview</label>
+                      <img
+                        src={content.posterSettings.image}
+                        alt="Poster Preview"
+                        className="max-w-xs max-h-48 object-contain border rounded-lg"
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="showOnce"
+                      checked={content.posterSettings.showOnce}
+                      onChange={(e) => handleInputChange('showOnce', e.target.checked, 'posterSettings')}
+                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="showOnce" className="text-sm font-medium text-gray-700">
+                      Show only once per visitor
+                    </label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3">
+                    <button
+                      onClick={resetPosterPreview}
+                      className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center"
+                    >
+                      <RotateCcw className="w-4 h-4 mr-2" />
+                      Reset & Preview
+                    </button>
+                    <span className="text-sm text-gray-500">
+                      Click to test the poster popup
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Contact Information */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-2">Contact Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                <input
+                  type="tel"
+                  value={content.contactInfo.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value, 'contactInfo')}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter phone number"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input
+                  type="email"
+                  value={content.contactInfo.email}
+                  onChange={(e) => handleInputChange('email', e.target.value, 'contactInfo')}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter email address"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                <textarea
+                  value={content.contactInfo.address}
+                  onChange={(e) => handleInputChange('address', e.target.value, 'contactInfo')}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter school address"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* About Section */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-6 border-b pb-2">About Section</h2>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">About Title</label>
+                <input
+                  type="text"
+                  value={content.aboutTitle}
+                  onChange={(e) => handleInputChange('aboutTitle', e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter about section title"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">About Description</label>
+                <textarea
+                  value={content.aboutDescription}
+                  onChange={(e) => handleInputChange('aboutDescription', e.target.value)}
+                  rows={6}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter about description"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Floating Save Button */}
+      {hasUnsavedChanges && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <button
+            onClick={handleSave}
+            disabled={saveStatus === 'saving'}
+            className={`px-6 py-3 text-white font-medium rounded-full shadow-lg transition-all transform hover:scale-105 ${getSaveButtonColor()}`}
+          >
+            <Save className="w-5 h-5 inline mr-2" />
+            {getSaveButtonText()}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
