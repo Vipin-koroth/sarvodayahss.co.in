@@ -9,10 +9,11 @@ import {
   Calendar, 
   Image as ImageIcon, 
   Phone,
+  Save,
   Upload,
   Plus,
   Trash2,
-  Save
+  Edit3
 } from 'lucide-react';
 
 const AdminPanel = () => {
@@ -2107,5 +2108,7 @@ const AdminPanel = () => {
     </div>
   );
 };
+
+export default AdminPanel
 
 export default AdminPanel
