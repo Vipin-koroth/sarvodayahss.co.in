@@ -2112,15 +2112,19 @@ const AdminPanel = () => {
                     placeholder="https://example.com/poster-image.jpg"
                   />
                   {content.posterSettings.image && (
-                    <div className="mt-2">
+                        Hero Video URL (Optional) - Use YouTube, Vimeo, or Google Drive links
                       <img 
                         src={content.posterSettings.image} 
                         alt="Poster Preview" 
                         className="w-48 h-32 object-cover rounded border"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none';
-                        }}
+                        placeholder="https://drive.google.com/file/d/YOUR_FILE_ID/view or https://youtube.com/watch?v=VIDEO_ID"
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        For Google Drive: Share video → Copy link → Paste here<br/>
+                        For YouTube: Copy video URL from address bar
+                      </p>
                     </div>
                   )}
                 </div>

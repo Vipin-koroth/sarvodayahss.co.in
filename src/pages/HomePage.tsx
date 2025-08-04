@@ -33,15 +33,25 @@ const HomePage = () => {
         {/* Background Media */}
         {content.heroVideo ? (
           <div className="absolute inset-0">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="w-full h-full object-cover scale-105"
-            >
-              <source src={content.heroVideo} type="video/mp4" />
-            </video>
+            {content.heroVideo.includes('drive.google.com') ? (
+              <iframe
+                src={content.heroVideo.replace('/view', '/preview')}
+                className="w-full h-full object-cover scale-105"
+                frameBorder="0"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+              ></iframe>
+            ) : (
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover scale-105"
+              >
+                <source src={content.heroVideo} type="video/mp4" />
+              </video>
+            )}
             <div className="absolute inset-0 bg-black/40"></div>
           </div>
         ) : content.heroImage ? (
