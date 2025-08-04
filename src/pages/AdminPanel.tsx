@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useContent } from '../context/ContentContext';
+import { Save, Upload, Plus, Trash2, Edit, X, Image, Calendar, Users, BookOpen, Mail, Phone, MapPin, Clock, Info, CheckCircle, AlertTriangle, AlertCircle, Video } from 'lucide-react';
 import { 
   Settings, 
   Home, 
@@ -23,6 +23,7 @@ const AdminPanel = () => {
     updateContent, 
     addTeacher, 
     updateTeacher, 
+  const [videoUploadProgress, setVideoUploadProgress] = useState(0);
     deleteTeacher,
     addEvent,
     updateEvent,
