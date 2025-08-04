@@ -249,7 +249,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       over five decades, providing not just academic excellence but also character formation 
       and spiritual growth. Our commitment to the Jesuit tradition of "men and women for others" 
       shapes every aspect of our educational approach.`,
-    logoImage: '/Sravodaya_Small.png',
+    logoImage: 'https://stackblitz.com/storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCR3R0bGdFPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--360c7cc7a6763822f51cd19252e515b8cbaeb56c//Sravodaya_Small.png',
     bannerEnabled: true,
     bannerTitle: 'Welcome to Sarvodaya HSS',
     bannerMessage: 'Admissions Open for Academic Year 2025-26',
