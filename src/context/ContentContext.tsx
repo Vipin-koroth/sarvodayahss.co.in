@@ -45,10 +45,15 @@ interface ContentContextType {
     heroDescription: string;
     heroVideo: string;
     heroVideoFileName?: string;
+    bannerEnabled: boolean;
+    bannerTitle: string;
+    bannerMessage: string;
+    bannerButtonText: string;
+    bannerButtonLink: string;
+    bannerType: string;
     quickStatsTitle: string;
     exploreSectionTitle: string;
     welcomeSectionTitle: string;
-    administrationTitle: string;
     administrationTitle: string;
     transitionSettings: {
       heroTransition: string;
