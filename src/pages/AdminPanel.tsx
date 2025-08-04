@@ -2112,7 +2112,6 @@ const AdminPanel = () => {
                     placeholder="https://example.com/poster-image.jpg"
                   />
                   {content.posterSettings.image && (
-                        Hero Video URL (Optional) - Use YouTube, Vimeo, or Google Drive links
                       <img 
                         src={content.posterSettings.image} 
                         alt="Poster Preview" 
