@@ -43,6 +43,8 @@ interface ContentContextType {
     heroTitle: string;
     heroSubtitle: string;
     heroDescription: string;
+    heroVideo: string;
+    heroVideoFileName?: string;
     quickStatsTitle: string;
     exploreSectionTitle: string;
     welcomeSectionTitle: string;

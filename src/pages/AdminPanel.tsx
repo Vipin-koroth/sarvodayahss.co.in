@@ -13,7 +13,8 @@ import {
   Upload,
   Plus,
   Trash2,
-  Edit3
+  Edit3,
+  Video
 } from 'lucide-react';
 
 const AdminPanel = () => {
@@ -36,6 +37,7 @@ const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState('homepage');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [uploadingVideo, setUploadingVideo] = useState(false);
   const [newTeacher, setNewTeacher] = useState({
     name: '',
     designation: '',
@@ -153,6 +155,52 @@ const AdminPanel = () => {
     setNewAdmin({ name: '', designation: '', image: '' });
   };
 
+  const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please upload a valid video file (MP4, WebM, or OGG)');
+      return;
+    }
+
+    // Validate file size (50MB limit)
+    const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+    if (file.size > maxSize) {
+      alert('Video file size must be less than 50MB');
+      return;
+    }
+
+    setUploadingVideo(true);
+
+    try {
+      // Create a URL for the uploaded file
+      const videoUrl = URL.createObjectURL(file);
+      
+      // Create a file name with timestamp to avoid conflicts
+      const timestamp = Date.now();
+      const fileName = `hero-video-${timestamp}.${file.name.split('.').pop()}`;
+      
+      // In a real application, you would upload to your server/cloud storage
+      // For now, we'll use the object URL and store the file reference
+      updateContent({
+        heroVideo: videoUrl,
+        heroVideoFileName: fileName
+      });
+
+      alert('Video uploaded successfully! Note: In production, this should be uploaded to a proper file server.');
+    } catch (error) {
+      console.error('Error uploading video:', error);
+      alert('Error uploading video. Please try again.');
+    } finally {
+      setUploadingVideo(false);
+      // Reset the input
+      event.target.value = '';
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -258,6 +306,74 @@ const AdminPanel = () => {
             {content.heroImage && (
               <img src={content.heroImage} alt="Hero" className="mt-2 h-32 w-full object-cover rounded" />
             )}
+          </div>
+
+          {/* Hero Video Section */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Hero Video</label>
+            
+            {/* Current Video Display */}
+            {content.heroVideo && (
+              <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">Current Video:</span>
+                  <button
+                    onClick={() => updateContent({ heroVideo: '', heroVideoFileName: '' })}
+                    className="text-red-600 hover:text-red-800 text-sm"
+                  >
+                    Remove Video
+                  </button>
+                </div>
+                <div className="bg-black rounded-lg overflow-hidden">
+                  <video
+                    src={content.heroVideo}
+                    className="w-full h-32 object-cover"
+                    controls
+                    muted
+                  />
+                </div>
+                {content.heroVideoFileName && (
+                  <p className="text-xs text-gray-500 mt-1">File: {content.heroVideoFileName}</p>
+                )}
+              </div>
+            )}
+
+            {/* Upload Options */}
+            <div className="space-y-4">
+              {/* File Upload */}
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-2">Upload Video File</label>
+                <div className="flex items-center space-x-4">
+                  <label className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition-colors">
+                    <Upload className="h-4 w-4 mr-2" />
+                    {uploadingVideo ? 'Uploading...' : 'Choose Video File'}
+                    <input
+                      type="file"
+                      accept="video/mp4,video/webm,video/ogg"
+                      onChange={handleVideoUpload}
+                      disabled={uploadingVideo}
+                      className="hidden"
+                    />
+                  </label>
+                  <span className="text-xs text-gray-500">Max 50MB (MP4, WebM, OGG)</span>
+                </div>
+              </div>
+
+              {/* URL Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-2">Or Enter Video URL</label>
+                <input
+                  type="url"
+                  value={content.heroVideo?.startsWith('blob:') ? '' : (content.heroVideo || '')}
+                  onChange={(e) => updateContent({ heroVideo: e.target.value, heroVideoFileName: '' })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="https://example.com/video.mp4"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Direct video URL (MP4, WebM) or embedded video URL (YouTube, Vimeo)
+                </p>
+              </div>
+            </div>
           </div>
           
           <div>
