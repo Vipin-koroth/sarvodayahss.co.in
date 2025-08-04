@@ -21,7 +21,6 @@ import {
   Trash2,
   Edit
 } from 'lucide-react';
-import { useContent } from '../context/ContentContext';
 
 const AdminPanel = () => {
   const { content, updateContent, addTeacher, updateTeacher, deleteTeacher, addEvent, updateEvent, deleteEvent, addGalleryItem, deleteGalleryItem, addAdministration, updateAdministration, deleteAdministration } = useContent();
