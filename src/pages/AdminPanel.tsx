@@ -4,6 +4,9 @@ import {
   Settings, 
   Home, 
   Info, 
+  
+  // Initialize formData state with current content
+  const [formData, setFormData] = useState(content);
   BookOpen, 
   Users, 
   Calendar, 
