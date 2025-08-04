@@ -203,6 +203,21 @@ interface ContentContextType {
       copyrightText: string;
       managementText: string;
     };
+    
+    // Poster/Popup Settings
+    posterSettings: {
+      enabled: boolean;
+      title: string;
+      message: string;
+      image: string;
+      buttonText: string;
+      buttonLink: string;
+      showOnce: boolean;
+      autoClose: boolean;
+      autoCloseDelay: number;
+      overlayColor: string;
+      position: string;
+    };
   };
   updateContent: (newContent: Partial<ContentContextType['content']>) => void;
   addTeacher: (teacher: Omit<Teacher, 'id'>) => void;
@@ -533,6 +548,21 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       ],
       copyrightText: '© 2025 Sarvodaya Higher Secondary School, Eachome. All rights reserved.',
       managementText: 'Managed by Kerala Jesuit Fathers | Government Aided Institution'
+    },
+    
+    // Poster/Popup Settings
+    posterSettings: {
+      enabled: true,
+      title: 'Welcome to Sarvodaya HSS',
+      message: 'Admissions Open for Academic Year 2025-26. Join our family of excellence in education. Limited seats available!',
+      image: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=800',
+      buttonText: 'Apply Now',
+      buttonLink: '/contact',
+      showOnce: true,
+      autoClose: false,
+      autoCloseDelay: 10,
+      overlayColor: 'dark',
+      position: 'center'
     }
   });
 

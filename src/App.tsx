@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ContentProvider } from './context/ContentContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import PosterPopup from './components/PosterPopup';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import AcademicsPage from './pages/AcademicsPage';
@@ -18,6 +19,7 @@ function App() {
       <Router>
         <div className="min-h-screen bg-gray-50">
           <Navbar />
+          <PosterPopup />
           <main>
             <Routes>
               <Route path="/" element={<HomePage />} />
