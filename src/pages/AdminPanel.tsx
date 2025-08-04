@@ -3,12 +3,10 @@ import { useContent } from '../context/ContentContext';
 import { 
   Settings, 
   Home, 
-  Info, 
-  
+  Info,
+} from 'lucide-react';
 import React, { useState } from 'react';
 import {
-  MapPin,
-  Phone,
   Mail,
   Save,
   Upload,
