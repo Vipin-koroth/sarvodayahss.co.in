@@ -2066,6 +2066,300 @@ const AdminPanel = () => {
                 </div>
               </div>
             </div>
+
+            {/* Footer Settings */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Footer Settings</h3>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* School Info */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-800">School Information</h4>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">School Name</label>
+                    <input
+                      type="text"
+                      value={content.footerContent.schoolName}
+                      onChange={(e) => updateContent({
+                        footerContent: {
+                          ...content.footerContent,
+                          schoolName: e.target.value
+                        }
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Tagline</label>
+                    <input
+                      type="text"
+                      value={content.footerContent.tagline}
+                      onChange={(e) => updateContent({
+                        footerContent: {
+                          ...content.footerContent,
+                          tagline: e.target.value
+                        }
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <textarea
+                      value={content.footerContent.description}
+                      onChange={(e) => updateContent({
+                        footerContent: {
+                          ...content.footerContent,
+                          description: e.target.value
+                        }
+                      })}
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+                
+                {/* Contact Info */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-800">Contact Information</h4>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                    <input
+                      type="text"
+                      value={content.footerContent.phone}
+                      onChange={(e) => updateContent({
+                        footerContent: {
+                          ...content.footerContent,
+                          phone: e.target.value
+                        }
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input
+                      type="email"
+                      value={content.footerContent.email}
+                      onChange={(e) => updateContent({
+                        footerContent: {
+                          ...content.footerContent,
+                          email: e.target.value
+                        }
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Address */}
+              <div className="mt-6">
+                <h4 className="font-semibold text-gray-800 mb-4">Address</h4>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 1</label>
+                    <input
+                      type="text"
+                      value={content.footerContent.address.line1}
+                      onChange={(e) => updateContent({
+                        footerContent: {
+                          ...content.footerContent,
+                          address: {
+                            ...content.footerContent.address,
+                            line1: e.target.value
+                          }
+                        }
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 2</label>
+                    <input
+                      type="text"
+                      value={content.footerContent.address.line2}
+                      onChange={(e) => updateContent({
+                        footerContent: {
+                          ...content.footerContent,
+                          address: {
+                            ...content.footerContent.address,
+                            line2: e.target.value
+                          }
+                        }
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Address Line 3</label>
+                    <input
+                      type="text"
+                      value={content.footerContent.address.line3}
+                      onChange={(e) => updateContent({
+                        footerContent: {
+                          ...content.footerContent,
+                          address: {
+                            ...content.footerContent.address,
+                            line3: e.target.value
+                          }
+                        }
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
+                    <input
+                      type="text"
+                      value={content.footerContent.address.pincode}
+                      onChange={(e) => updateContent({
+                        footerContent: {
+                          ...content.footerContent,
+                          address: {
+                            ...content.footerContent.address,
+                            pincode: e.target.value
+                          }
+                        }
+                      })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Quick Links */}
+              <div className="mt-6">
+                <h4 className="font-semibold text-gray-800 mb-4">Quick Links</h4>
+                <div className="space-y-3">
+                  {content.footerContent.quickLinks.map((link, index) => (
+                    <div key={index} className="grid md:grid-cols-3 gap-3 items-center">
+                      <input
+                        type="text"
+                        placeholder="Link Name"
+                        value={link.name}
+                        onChange={(e) => {
+                          const updatedLinks = [...content.footerContent.quickLinks];
+                          updatedLinks[index] = { ...link, name: e.target.value };
+                          updateContent({
+                            footerContent: {
+                              ...content.footerContent,
+                              quickLinks: updatedLinks
+                            }
+                          });
+                        }}
+                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <input
+                        type="text"
+                        placeholder="URL"
+                        value={link.url}
+                        onChange={(e) => {
+                          const updatedLinks = [...content.footerContent.quickLinks];
+                          updatedLinks[index] = { ...link, url: e.target.value };
+                          updateContent({
+                            footerContent: {
+                              ...content.footerContent,
+                              quickLinks: updatedLinks
+                            }
+                          });
+                        }}
+                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div className="flex items-center space-x-2">
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={link.isExternal}
+                            onChange={(e) => {
+                              const updatedLinks = [...content.footerContent.quickLinks];
+                              updatedLinks[index] = { ...link, isExternal: e.target.checked };
+                              updateContent({
+                                footerContent: {
+                                  ...content.footerContent,
+                                  quickLinks: updatedLinks
+                                }
+                              });
+                            }}
+                            className="mr-2"
+                          />
+                          External
+                        </label>
+                        <button
+                          onClick={() => {
+                            const updatedLinks = content.footerContent.quickLinks.filter((_, i) => i !== index);
+                            updateContent({
+                              footerContent: {
+                                ...content.footerContent,
+                                quickLinks: updatedLinks
+                              }
+                            });
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      const newLink = { name: '', url: '', isExternal: false };
+                      updateContent({
+                        footerContent: {
+                          ...content.footerContent,
+                          quickLinks: [...content.footerContent.quickLinks, newLink]
+                        }
+                      });
+                    }}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm"
+                  >
+                    Add Quick Link
+                  </button>
+                </div>
+              </div>
+              
+              {/* Copyright & Management */}
+              <div className="mt-6 grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Copyright Text</label>
+                  <input
+                    type="text"
+                    value={content.footerContent.copyrightText}
+                    onChange={(e) => updateContent({
+                      footerContent: {
+                        ...content.footerContent,
+                        copyrightText: e.target.value
+                      }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Management Text</label>
+                  <input
+                    type="text"
+                    value={content.footerContent.managementText}
+                    onChange={(e) => updateContent({
+                      footerContent: {
+                        ...content.footerContent,
+                        managementText: e.target.value
+                      }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         );
 
