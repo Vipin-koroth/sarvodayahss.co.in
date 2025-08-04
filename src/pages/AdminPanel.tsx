@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Save, Upload, Plus, Trash2, Edit, X, Image, Calendar, Users, BookOpen, Mail, Phone, MapPin, Clock, Info, CheckCircle, AlertTriangle, AlertCircle, Video } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 import { 
   Settings, 
   Home, 
@@ -13,8 +13,7 @@ import {
   Upload,
   Plus,
   Trash2,
-  Edit3,
-  Video
+  Edit3
 } from 'lucide-react';
 
 const AdminPanel = () => {
@@ -37,8 +36,6 @@ const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState('homepage');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [videoUploadProgress, setVideoUploadProgress] = useState(0);
   const [newTeacher, setNewTeacher] = useState({
     name: '',
     designation: '',
@@ -86,41 +83,6 @@ const AdminPanel = () => {
       updateContent({ [field]: imageUrl });
     };
     reader.readAsDataURL(file);
-  };
-
-  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith('video/')) {
-      alert('Please select a valid video file');
-      return;
-    }
-
-    // Validate file size (50MB limit)
-    if (file.size > 50 * 1024 * 1024) {
-      alert('Video file size must be less than 50MB');
-      return;
-    }
-
-    // Create object URL for the video
-    const videoUrl = URL.createObjectURL(file);
-    
-    // Simulate upload progress
-    setVideoUploadProgress(0);
-    const interval = setInterval(() => {
-      setVideoUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          // Set the video URL after upload completes
-          updateContent({ heroVideo: videoUrl });
-          setTimeout(() => setVideoUploadProgress(0), 1000);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 100);
   };
 
   const handleNestedUpdate = (section: string, field: string, value: any) => {
@@ -1829,54 +1791,18 @@ const AdminPanel = () => {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hero Video URL
+                    Hero Video URL (Optional)
                   </label>
                   <input
                     type="url"
-                    value={content.heroVideo || ''}
+                    value={content.heroVideo}
                     onChange={(e) => updateContent({ heroVideo: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="https://example.com/video.mp4"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Or upload a video file below</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Upload Video File
-                  </label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                    <input
-                      type="file"
-                      accept="video/*"
-                      onChange={handleVideoUpload}
-                      className="hidden"
-                      id="video-upload"
-                    />
-                    <label
-                      htmlFor="video-upload"
-                      className="cursor-pointer flex flex-col items-center"
-                    >
-                      <Video className="h-12 w-12 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-600">
-                        Click to upload video file
-                      </span>
-                      <span className="text-xs text-gray-500 mt-1">
-                        MP4, WebM, or OGV (Max 50MB)
-                      </span>
-                    </label>
-                  </div>
-                  {videoUploadProgress > 0 && videoUploadProgress < 100 && (
-                    <div className="mt-2">
-                      <div className="bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${videoUploadProgress}%` }}
-                        ></div>
-                      </div>
-                      <p className="text-xs text-gray-600 mt-1">Uploading... {videoUploadProgress}%</p>
-                    </div>
-                  )}
+                  <p className="text-sm text-gray-500 mt-1">
+                    If provided, video will play instead of background image
+                  </p>
                 </div>
 
                 <div>
@@ -2071,5 +1997,7 @@ const AdminPanel = () => {
     </div>
   );
 };
+
+export default AdminPanel;
 
 export default AdminPanel
