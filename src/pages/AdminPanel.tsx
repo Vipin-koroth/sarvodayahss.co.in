@@ -5,13 +5,17 @@ import {
   Home, 
   Info, 
   BookOpen, 
+  Users, 
+  Calendar, 
   Image as ImageIcon, 
   Phone,
+  Save,
+  Upload,
   Plus,
   Trash2,
   Edit3
 } from 'lucide-react';
-  Save as SaveIcon,
+
 const AdminPanel = () => {
   const { 
     content, 
@@ -2104,8 +2108,6 @@ const AdminPanel = () => {
     </div>
   );
 };
-
-export default AdminPanel
 
 export default AdminPanel
 
