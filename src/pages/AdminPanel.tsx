@@ -23,7 +23,6 @@ const AdminPanel = () => {
     updateContent, 
     addTeacher, 
     updateTeacher, 
-  const [videoUploadProgress, setVideoUploadProgress] = useState(0);
     deleteTeacher,
     addEvent,
     updateEvent,
@@ -39,6 +38,7 @@ const AdminPanel = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [videoUploadProgress, setVideoUploadProgress] = useState(0);
   const [newTeacher, setNewTeacher] = useState({
     name: '',
     designation: '',
@@ -90,39 +90,37 @@ const AdminPanel = () => {
 
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Check file size (50MB limit)
-      if (file.size > 50 * 1024 * 1024) {
-        alert('File size must be less than 50MB');
-        return;
-      }
+    if (!file) return;
 
-      // Check file type
-      if (!file.type.startsWith('video/')) {
-        alert('Please select a valid video file');
-        return;
-      }
-
-      // Simulate file upload with progress
-      setUploadProgress(0);
-      const reader = new FileReader();
-      
-      reader.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const progress = (event.loaded / event.total) * 100;
-          setUploadProgress(progress);
-        }
-      };
-      
-      reader.onload = (event) => {
-        const videoUrl = event.target?.result as string;
-        updateContent({ heroVideo: videoUrl });
-        setUploadProgress(100);
-        setTimeout(() => setUploadProgress(0), 2000);
-      };
-      
-      reader.readAsDataURL(file);
+    // Validate file type
+    if (!file.type.startsWith('video/')) {
+      alert('Please select a valid video file');
+      return;
     }
+
+    // Validate file size (50MB limit)
+    if (file.size > 50 * 1024 * 1024) {
+      alert('Video file size must be less than 50MB');
+      return;
+    }
+
+    // Create object URL for the video
+    const videoUrl = URL.createObjectURL(file);
+    
+    // Simulate upload progress
+    setVideoUploadProgress(0);
+    const interval = setInterval(() => {
+      setVideoUploadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          // Set the video URL after upload completes
+          updateContent({ heroVideo: videoUrl });
+          setTimeout(() => setVideoUploadProgress(0), 1000);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 100);
   };
 
   const handleNestedUpdate = (section: string, field: string, value: any) => {
@@ -1868,15 +1866,15 @@ const AdminPanel = () => {
                       </span>
                     </label>
                   </div>
-                  {uploadProgress > 0 && uploadProgress < 100 && (
+                  {videoUploadProgress > 0 && videoUploadProgress < 100 && (
                     <div className="mt-2">
                       <div className="bg-gray-200 rounded-full h-2">
                         <div
                           className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${uploadProgress}%` }}
+                          style={{ width: `${videoUploadProgress}%` }}
                         ></div>
                       </div>
-                      <p className="text-xs text-gray-600 mt-1">Uploading... {uploadProgress}%</p>
+                      <p className="text-xs text-gray-600 mt-1">Uploading... {videoUploadProgress}%</p>
                     </div>
                   )}
                 </div>

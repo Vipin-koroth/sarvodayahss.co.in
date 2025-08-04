@@ -38,9 +38,13 @@ const HomePage = () => {
               muted
               loop
               playsInline
+              preload="auto"
               className="w-full h-full object-cover scale-105"
             >
               <source src={content.heroVideo} type="video/mp4" />
+              <source src={content.heroVideo} type="video/webm" />
+              <source src={content.heroVideo} type="video/ogg" />
+              Your browser does not support the video tag.
             </video>
             <div className="absolute inset-0 bg-black/40"></div>
           </div>
