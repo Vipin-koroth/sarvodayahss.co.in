@@ -3,7 +3,6 @@ import { Save, Plus, Trash2, Edit, X, Eye, EyeOff, Upload, Play, Video } from 'l
 import { 
   Settings, 
   Home, 
-  Info, 
   BookOpen, 
   Users, 
   Calendar, 
