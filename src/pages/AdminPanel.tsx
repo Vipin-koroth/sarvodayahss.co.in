@@ -12,7 +12,6 @@ import {
   X,
   CheckCircle,
   AlertCircle,
-  Settings,
   Image,
   FileText,
   Globe,
