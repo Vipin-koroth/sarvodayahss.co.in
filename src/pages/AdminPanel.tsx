@@ -5,6 +5,31 @@ import {
   Home, 
   Info, 
   
+import React, { useState } from 'react';
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Save,
+  Upload,
+  X,
+  CheckCircle,
+  AlertCircle,
+  Settings,
+  Image,
+  FileText,
+  Globe,
+  Eye,
+  EyeOff,
+  Plus,
+  Trash2,
+  Edit
+} from 'lucide-react';
+import { useContent } from '../context/ContentContext';
+
+const AdminPanel = () => {
+  const { content, updateContent, addTeacher, updateTeacher, deleteTeacher, addEvent, updateEvent, deleteEvent, addGalleryItem, deleteGalleryItem, addAdministration, updateAdministration, deleteAdministration } = useContent();
+
   // Initialize formData state with current content
   const [formData, setFormData] = useState(content);
   BookOpen, 
