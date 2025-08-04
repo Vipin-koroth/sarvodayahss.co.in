@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Save, Upload, Plus, Trash2, Edit, X, Image, Calendar, Users, BookOpen, Mail, Phone, MapPin, Clock, Info, CheckCircle, AlertTriangle, AlertCircle, Video } from 'lucide-react';
 import { 
   Settings, 
-  Home, 
   Info, 
   BookOpen, 
   Users, 
