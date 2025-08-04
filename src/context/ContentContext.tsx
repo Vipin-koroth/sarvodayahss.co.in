@@ -181,6 +181,28 @@ interface ContentContextType {
         sunday: string;
       };
     };
+    
+    // Footer Content
+    footerContent: {
+      schoolName: string;
+      tagline: string;
+      description: string;
+      address: {
+        line1: string;
+        line2: string;
+        line3: string;
+        pincode: string;
+      };
+      phone: string;
+      email: string;
+      quickLinks: Array<{
+        name: string;
+        url: string;
+        isExternal: boolean;
+      }>;
+      copyrightText: string;
+      managementText: string;
+    };
   };
   updateContent: (newContent: Partial<ContentContextType['content']>) => void;
   addTeacher: (teacher: Omit<Teacher, 'id'>) => void;
@@ -487,6 +509,30 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         saturday: 'Saturday: 8:00 AM - 12:00 PM',
         sunday: 'Sunday: Closed'
       }
+    },
+    
+    // Footer Content
+    footerContent: {
+      schoolName: 'Sarvodaya HSS',
+      tagline: 'Excellence in Education',
+      description: 'A Kerala Government Aided School managed by the Kerala Jesuit Fathers, committed to providing quality education and holistic development.',
+      address: {
+        line1: 'Sarvodaya Higher Secondary School',
+        line2: 'Eachome, Wayanad District',
+        line3: 'Kerala, India',
+        pincode: '673592'
+      },
+      phone: '+91 493 622 3456',
+      email: 'info@sarvodayahss.edu.in',
+      quickLinks: [
+        { name: 'About Us', url: '/about', isExternal: false },
+        { name: 'Academic Programs', url: '/academics', isExternal: false },
+        { name: 'Our Staff', url: '/teachers', isExternal: false },
+        { name: 'Events & News', url: '/events', isExternal: false },
+        { name: 'School Accounts', url: 'https://sarvodayapay.netlify.app/', isExternal: true }
+      ],
+      copyrightText: '© 2025 Sarvodaya Higher Secondary School, Eachome. All rights reserved.',
+      managementText: 'Managed by Kerala Jesuit Fathers | Government Aided Institution'
     }
   });
 
