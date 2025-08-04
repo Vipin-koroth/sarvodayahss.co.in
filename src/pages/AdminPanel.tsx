@@ -5,7 +5,7 @@ import {
   Home, 
   Info,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Mail,
   Save,
