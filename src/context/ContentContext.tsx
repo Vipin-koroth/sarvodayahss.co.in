@@ -34,28 +34,13 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3" onClick={handleNavClick}>
-              {content.logoImage && content.logoImage.trim() !== '' && content.logoImage !== '/Sravodaya_Small.png' ? (
+              {(content.logoImage && content.logoImage.trim() !== '') || '/Sravodaya_Small.png' ? (
                 <img 
-                  src={content.logoImage} 
+                  src={content.logoImage && content.logoImage.trim() !== '' ? content.logoImage : '/Sravodaya_Small.png'} 
                   alt="Sarvodaya HSS Logo" 
                   className="h-10 w-10 rounded-full object-cover"
                   onError={(e) => {
-                    console.log('Custom logo failed to load:', content.logoImage);
-                    e.currentTarget.style.display = 'none';
-                    const defaultLogo = e.currentTarget.parentElement?.querySelector('.default-logo') as HTMLElement;
-                    if (defaultLogo) defaultLogo.classList.remove('hidden');
-                  }}
-                />
-              ) : null}
-              
-              <img 
-                src="/Sravodaya_Small.png" 
-                <img 
-                  src={content.logoImage} 
-                  alt="Sarvodaya HSS Logo" 
-                  className="h-10 w-10 rounded-full object-cover"
-                  onError={(e) => {
-                    console.log('Custom logo failed to load:', content.logoImage);
+                    console.log('Logo failed to load:', content.logoImage || '/Sravodaya_Small.png');
                     e.currentTarget.style.display = 'none';
                     const fallbackIcon = e.currentTarget.parentElement?.querySelector('.lucide-graduation-cap') as HTMLElement;
                     if (fallbackIcon) fallbackIcon.classList.remove('hidden');

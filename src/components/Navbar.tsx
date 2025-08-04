@@ -34,7 +34,7 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3" onClick={handleNavClick}>
-              {content.logoImage && content.logoImage.trim() !== '' ? (
+              {content.logoImage && content.logoImage.trim() !== '' && content.logoImage !== '/Sravodaya_Small.png' ? (
                 <img 
                   src={content.logoImage} 
                   alt="Sarvodaya HSS Logo" 
@@ -42,14 +42,25 @@ const Navbar = () => {
                   onError={(e) => {
                     console.log('Custom logo failed to load:', content.logoImage);
                     e.currentTarget.style.display = 'none';
-                    const fallbackIcon = e.currentTarget.parentElement?.querySelector('.lucide-graduation-cap') as HTMLElement;
-                    if (fallbackIcon) fallbackIcon.classList.remove('hidden');
+                    const defaultLogo = e.currentTarget.parentElement?.querySelector('.default-logo') as HTMLElement;
+                    if (defaultLogo) defaultLogo.classList.remove('hidden');
                   }}
                 />
-              ) : (
-                <GraduationCap className="h-8 w-8 text-blue-800" />
-              )}
-              <GraduationCap className="h-8 w-8 text-blue-800 hidden" />
+              ) : null}
+              
+              <img 
+                src="https://stackblitz.com/storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCR3R0bGdFPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--360c7cc7a6763822f51cd19252e515b8cbaeb56c//Sravodaya_Small.png"
+                alt="Sarvodaya HSS Logo" 
+                className={`h-10 w-10 rounded-full object-cover default-logo ${content.logoImage && content.logoImage.trim() !== '' && content.logoImage !== '/Sravodaya_Small.png' ? 'hidden' : ''}`}
+                onError={(e) => {
+                  console.log('Default logo failed to load');
+                  e.currentTarget.style.display = 'none';
+                  const fallbackIcon = e.currentTarget.parentElement?.querySelector('.lucide-graduation-cap') as HTMLElement;
+                  if (fallbackIcon) fallbackIcon.classList.remove('hidden');
+                }}
+              />
+              
+              <GraduationCap className={`h-8 w-8 text-blue-800 ${content.logoImage && content.logoImage.trim() !== '' ? 'hidden' : ''}`} />
               <div className="flex flex-col">
                 <span className="text-xl font-bold text-blue-800">Sarvodaya HSS</span>
                 <span className="text-xs text-gray-600 hidden sm:block">Eachome, Wayanad</span>
