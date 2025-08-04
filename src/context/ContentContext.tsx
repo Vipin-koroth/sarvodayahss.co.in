@@ -60,6 +60,15 @@ interface ContentContextType {
       cardTransitions: boolean;
       fadeInDuration: number;
     };
+    promotionalPopup: {
+      enabled: boolean;
+      title: string;
+      imageUrl: string;
+      description: string;
+      buttonText: string;
+      buttonLink: string;
+      showOnce: boolean;
+    };
     schoolStats: {
       yearsOfExcellence: number;
       totalStudents: number;
@@ -270,6 +279,15 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       heroTransition: 'fade',
       cardTransitions: true,
       fadeInDuration: 800
+    },
+    promotionalPopup: {
+      enabled: false,
+      title: 'New Program Announcement',
+      imageUrl: '',
+      description: 'Check out our latest academic programs and admission details.',
+      buttonText: 'Learn More',
+      buttonLink: '/academics',
+      showOnce: true
     },
     schoolStats: {
       yearsOfExcellence: 50,

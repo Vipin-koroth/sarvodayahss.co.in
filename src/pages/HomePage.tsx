@@ -2,6 +2,7 @@ import { ArrowRight, BookOpen, Users, Award, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useContent } from '../context/ContentContext';
 import Banner from '../components/Banner';
+import PromotionalPopup from '../components/PromotionalPopup';
 
 const HomePage = () => {
   const { content } = useContent();
@@ -25,6 +26,9 @@ const HomePage = () => {
   };
   return (
     <div>
+      {/* Promotional Popup */}
+      <PromotionalPopup />
+
       {/* Banner */}
       {content.bannerEnabled && <Banner />}
 
