@@ -553,16 +553,8 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     // Poster/Popup Settings
     posterSettings: {
       enabled: true,
-      title: 'Welcome to Sarvodaya HSS',
-      message: 'Admissions Open for Academic Year 2025-26. Join our family of excellence in education. Limited seats available!',
       image: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=800',
-      buttonText: 'Apply Now',
-      buttonLink: '/contact',
-      showOnce: true,
-      autoClose: false,
-      autoCloseDelay: 10,
-      overlayColor: 'dark',
-      position: 'center'
+      showOnce: true
     }
   });
 
