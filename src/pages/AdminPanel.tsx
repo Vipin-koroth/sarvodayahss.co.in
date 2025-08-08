@@ -142,8 +142,8 @@ const AdminPanel = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">School Name</label>
                 <input
                   type="text"
-                  value={content.schoolName}
-                  onChange={(e) => handleInputChange('schoolName', e.target.value)}
+                  value={content.footerContent.schoolName}
+                  onChange={(e) => handleInputChange('schoolName', e.target.value, 'footerContent')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter school name"
                 />
@@ -289,8 +289,8 @@ const AdminPanel = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                 <input
                   type="tel"
-                  value={content.contactInfo.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value, 'contactInfo')}
+                  value={content.footerContent.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value, 'footerContent')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter phone number"
                 />
@@ -299,8 +299,8 @@ const AdminPanel = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                 <input
                   type="email"
-                  value={content.contactInfo.email}
-                  onChange={(e) => handleInputChange('email', e.target.value, 'contactInfo')}
+                  value={content.footerContent.email}
+                  onChange={(e) => handleInputChange('email', e.target.value, 'footerContent')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter email address"
                 />
@@ -308,8 +308,23 @@ const AdminPanel = () => {
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
                 <textarea
-                  value={content.contactInfo.address}
-                  onChange={(e) => handleInputChange('address', e.target.value, 'contactInfo')}
+                  value={content.footerContent.address.line1}
+                  onChange={(e) => {
+                    updateContent({
+                      ...content,
+                      footerContent: {
+                        ...content.footerContent,
+                        address: {
+                          ...content.footerContent.address,
+                          line1: e.target.value
+                        }
+                      }
+                    });
+                    if (!hasUnsavedChanges) {
+                      setHasUnsavedChanges(true);
+                      setUnsavedCount(prev => prev + 1);
+                    }
+                  }}
                   rows={3}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter school address"
@@ -326,8 +341,8 @@ const AdminPanel = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">About Title</label>
                 <input
                   type="text"
-                  value={content.aboutTitle}
-                  onChange={(e) => handleInputChange('aboutTitle', e.target.value)}
+                  value={content.aboutPage.pageTitle}
+                  onChange={(e) => handleInputChange('pageTitle', e.target.value, 'aboutPage')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter about section title"
                 />
@@ -335,8 +350,8 @@ const AdminPanel = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">About Description</label>
                 <textarea
-                  value={content.aboutDescription}
-                  onChange={(e) => handleInputChange('aboutDescription', e.target.value)}
+                  value={content.aboutPage.pageSubtitle}
+                  onChange={(e) => handleInputChange('pageSubtitle', e.target.value, 'aboutPage')}
                   rows={6}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter about description"
