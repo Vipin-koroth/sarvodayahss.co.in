@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import googleDriveService from '../services/googleDriveService';
 
 // Storage utilities
 const STORAGE_KEY = 'sarvodaya-school-content';
@@ -241,6 +242,12 @@ interface ContentContextType {
     };
   };
   updateContent: (newContent: Partial<ContentContextType['content']>) => void;
+  syncWithGoogleDrive: () => Promise<boolean>;
+  loadFromGoogleDrive: () => Promise<boolean>;
+  saveToGoogleDrive: () => Promise<boolean>;
+  isGoogleDriveConnected: () => boolean;
+  connectGoogleDrive: () => Promise<boolean>;
+  disconnectGoogleDrive: () => Promise<void>;
   addTeacher: (teacher: Omit<Teacher, 'id'>) => void;
   updateTeacher: (id: string, teacher: Partial<Teacher>) => void;
   deleteTeacher: (id: string) => void;
@@ -587,6 +594,16 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   };
 
   const [content, setContent] = useState(getInitialContent);
+  const [isGoogleDriveInitialized, setIsGoogleDriveInitialized] = useState(false);
+
+  // Initialize Google Drive service on component mount
+  React.useEffect(() => {
+    const initGoogleDrive = async () => {
+      const initialized = await googleDriveService.initialize();
+      setIsGoogleDriveInitialized(initialized);
+    };
+    initGoogleDrive();
+  }, []);
 
   const updateContent = (newContent: Partial<ContentContextType['content']>) => {
     const updatedContent = { ...content, ...newContent };
@@ -715,6 +732,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     <ContentContext.Provider value={{ 
       content, 
       updateContent, 
+      syncWithGoogleDrive,
+      loadFromGoogleDrive,
+      saveToGoogleDrive,
+      isGoogleDriveConnected,
+      connectGoogleDrive,
+      disconnectGoogleDrive,
       addTeacher, 
       updateTeacher, 
       deleteTeacher,

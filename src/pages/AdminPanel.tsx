@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
 import { useContent } from '../context/ContentContext';
-import { Save, Upload, Eye, RotateCcw } from 'lucide-react';
+import { Save, Upload, Eye, RotateCcw, Cloud, CloudOff, Download, RefreshCw } from 'lucide-react';
 
 const AdminPanel = () => {
-  const { content, updateContent } = useContent();
+  const { 
+    content, 
+    updateContent, 
+    connectGoogleDrive, 
+    disconnectGoogleDrive, 
+    isGoogleDriveConnected, 
+    loadFromGoogleDrive, 
+    saveToGoogleDrive, 
+    syncWithGoogleDrive 
+  } = useContent();
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [unsavedCount, setUnsavedCount] = useState(0);
+  const [driveStatus, setDriveStatus] = useState<'idle' | 'connecting' | 'syncing' | 'success' | 'error'>('idle');
 
   const handleInputChange = (field: string, value: any, section?: string) => {
     if (section) {
@@ -71,6 +81,85 @@ const AdminPanel = () => {
     window.location.reload();
   };
 
+  const handleConnectGoogleDrive = async () => {
+    setDriveStatus('connecting');
+    try {
+      const success = await connectGoogleDrive();
+      if (success) {
+        setDriveStatus('success');
+        setTimeout(() => setDriveStatus('idle'), 3000);
+      } else {
+        setDriveStatus('error');
+        setTimeout(() => setDriveStatus('idle'), 3000);
+      }
+    } catch (error) {
+      setDriveStatus('error');
+      setTimeout(() => setDriveStatus('idle'), 3000);
+    }
+  };
+
+  const handleDisconnectGoogleDrive = async () => {
+    await disconnectGoogleDrive();
+    setDriveStatus('idle');
+  };
+
+  const handleSyncGoogleDrive = async () => {
+    setDriveStatus('syncing');
+    try {
+      const success = await syncWithGoogleDrive();
+      if (success) {
+        setDriveStatus('success');
+        setHasUnsavedChanges(false);
+        setUnsavedCount(0);
+        setTimeout(() => setDriveStatus('idle'), 3000);
+      } else {
+        setDriveStatus('error');
+        setTimeout(() => setDriveStatus('idle'), 3000);
+      }
+    } catch (error) {
+      setDriveStatus('error');
+      setTimeout(() => setDriveStatus('idle'), 3000);
+    }
+  };
+
+  const handleLoadFromGoogleDrive = async () => {
+    setDriveStatus('syncing');
+    try {
+      const success = await loadFromGoogleDrive();
+      if (success) {
+        setDriveStatus('success');
+        setHasUnsavedChanges(false);
+        setUnsavedCount(0);
+        setTimeout(() => setDriveStatus('idle'), 3000);
+      } else {
+        setDriveStatus('error');
+        setTimeout(() => setDriveStatus('idle'), 3000);
+      }
+    } catch (error) {
+      setDriveStatus('error');
+      setTimeout(() => setDriveStatus('idle'), 3000);
+    }
+  };
+
+  const handleSaveToGoogleDrive = async () => {
+    setDriveStatus('syncing');
+    try {
+      const success = await saveToGoogleDrive();
+      if (success) {
+        setDriveStatus('success');
+        setHasUnsavedChanges(false);
+        setUnsavedCount(0);
+        setTimeout(() => setDriveStatus('idle'), 3000);
+      } else {
+        setDriveStatus('error');
+        setTimeout(() => setDriveStatus('idle'), 3000);
+      }
+    } catch (error) {
+      setDriveStatus('error');
+      setTimeout(() => setDriveStatus('idle'), 3000);
+    }
+  };
+
   const getSaveButtonText = () => {
     switch (saveStatus) {
       case 'saving': return 'Saving...';
@@ -133,6 +222,88 @@ const AdminPanel = () => {
             </div>
             Admin Panel
           </h1>
+
+          {/* Google Drive Integration */}
+          <div className="mb-12 bg-gradient-to-r from-blue-50 to-emerald-50 p-6 rounded-xl border border-blue-200">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-4 flex items-center">
+              <Cloud className="w-6 h-6 mr-2 text-blue-600" />
+              Google Drive Integration
+            </h2>
+            
+            <div className="flex flex-wrap items-center gap-4">
+              {!isGoogleDriveConnected() ? (
+                <button
+                  onClick={handleConnectGoogleDrive}
+                  disabled={driveStatus === 'connecting'}
+                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors flex items-center disabled:opacity-50"
+                >
+                  <Cloud className="w-5 h-5 mr-2" />
+                  {driveStatus === 'connecting' ? 'Connecting...' : 'Connect Google Drive'}
+                </button>
+              ) : (
+                <>
+                  <div className="flex items-center text-green-600 bg-green-100 px-4 py-2 rounded-lg">
+                    <Cloud className="w-5 h-5 mr-2" />
+                    <span className="font-medium">Connected to Google Drive</span>
+                  </div>
+                  
+                  <button
+                    onClick={handleSyncGoogleDrive}
+                    disabled={driveStatus === 'syncing'}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors flex items-center disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-4 h-4 mr-2 ${driveStatus === 'syncing' ? 'animate-spin' : ''}`} />
+                    {driveStatus === 'syncing' ? 'Syncing...' : 'Sync'}
+                  </button>
+                  
+                  <button
+                    onClick={handleLoadFromGoogleDrive}
+                    disabled={driveStatus === 'syncing'}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center disabled:opacity-50"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Load from Drive
+                  </button>
+                  
+                  <button
+                    onClick={handleSaveToGoogleDrive}
+                    disabled={driveStatus === 'syncing'}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors flex items-center disabled:opacity-50"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Save to Drive
+                  </button>
+                  
+                  <button
+                    onClick={handleDisconnectGoogleDrive}
+                    className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors flex items-center"
+                  >
+                    <CloudOff className="w-4 h-4 mr-2" />
+                    Disconnect
+                  </button>
+                </>
+              )}
+            </div>
+            
+            {driveStatus === 'success' && (
+              <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-lg flex items-center">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                <span className="font-medium">Successfully synced with Google Drive!</span>
+              </div>
+            )}
+            
+            {driveStatus === 'error' && (
+              <div className="mt-4 p-3 bg-red-100 text-red-800 rounded-lg flex items-center">
+                <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                <span className="font-medium">Failed to sync with Google Drive. Please try again.</span>
+              </div>
+            )}
+            
+            <div className="mt-4 text-sm text-gray-600">
+              <p><strong>Connected Folder:</strong> Sarvodaya HSS Data</p>
+              <p><strong>Sync Status:</strong> {isGoogleDriveConnected() ? 'Auto-sync enabled' : 'Not connected'}</p>
+            </div>
+          </div>
 
           {/* School Information */}
           <div className="mb-12">
