@@ -1,5 +1,26 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+// Storage utilities
+const STORAGE_KEY = 'sarvodaya-school-content';
+
+const saveToStorage = (data: any) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.error('Failed to save to localStorage:', error);
+  }
+};
+
+const loadFromStorage = () => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch (error) {
+    console.error('Failed to load from localStorage:', error);
+    return null;
+  }
+};
+
 interface Teacher {
   id: string;
   name: string;
@@ -248,7 +269,13 @@ interface ContentProviderProps {
 }
 
 export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
-  const [content, setContent] = useState({
+  const getInitialContent = () => {
+    const storedContent = loadFromStorage();
+    if (storedContent) {
+      return storedContent;
+    }
+    
+    return {
     // Homepage Content
     welcomeMessage: `At Sarvodaya Higher Secondary School, we believe in the transformative power of education. 
       Under the guidance of the Kerala Jesuit Fathers, we have been nurturing young minds for 
@@ -556,73 +583,94 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       image: 'https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=800',
       showOnce: true
     }
-  });
+    };
+  };
+
+  const [content, setContent] = useState(getInitialContent);
 
   const updateContent = (newContent: Partial<ContentContextType['content']>) => {
-    setContent(prev => ({ ...prev, ...newContent }));
+    const updatedContent = { ...content, ...newContent };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   const addTeacher = (teacher: Omit<Teacher, 'id'>) => {
     const newTeacher = { ...teacher, id: Date.now().toString() };
-    setContent(prev => ({
-      ...prev,
-      teachers: [...prev.teachers, newTeacher]
-    }));
+    const updatedContent = {
+      ...content,
+      teachers: [...content.teachers, newTeacher]
+    };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   const updateTeacher = (id: string, updatedTeacher: Partial<Teacher>) => {
-    setContent(prev => ({
-      ...prev,
-      teachers: prev.teachers.map(teacher => 
+    const updatedContent = {
+      ...content,
+      teachers: content.teachers.map(teacher => 
         teacher.id === id ? { ...teacher, ...updatedTeacher } : teacher
       )
-    }));
+    };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   const deleteTeacher = (id: string) => {
-    setContent(prev => ({
-      ...prev,
-      teachers: prev.teachers.filter(teacher => teacher.id !== id)
-    }));
+    const updatedContent = {
+      ...content,
+      teachers: content.teachers.filter(teacher => teacher.id !== id)
+    };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   const addEvent = (event: Omit<Event, 'id'>) => {
     const newEvent = { ...event, id: Date.now().toString() };
-    setContent(prev => ({
-      ...prev,
-      events: [...prev.events, newEvent]
-    }));
+    const updatedContent = {
+      ...content,
+      events: [...content.events, newEvent]
+    };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   const updateEvent = (id: string, updatedEvent: Partial<Event>) => {
-    setContent(prev => ({
-      ...prev,
-      events: prev.events.map(event => 
+    const updatedContent = {
+      ...content,
+      events: content.events.map(event => 
         event.id === id ? { ...event, ...updatedEvent } : event
       )
-    }));
+    };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   const deleteEvent = (id: string) => {
-    setContent(prev => ({
-      ...prev,
-      events: prev.events.filter(event => event.id !== id)
-    }));
+    const updatedContent = {
+      ...content,
+      events: content.events.filter(event => event.id !== id)
+    };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   const addGalleryItem = (item: Omit<GalleryItem, 'id'>) => {
     const newItem = { ...item, id: Date.now().toString() };
-    setContent(prev => ({
-      ...prev,
-      galleryItems: [...prev.galleryItems, newItem]
-    }));
+    const updatedContent = {
+      ...content,
+      galleryItems: [...content.galleryItems, newItem]
+    };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   const deleteGalleryItem = (id: string) => {
-    setContent(prev => ({
-      ...prev,
-      galleryItems: prev.galleryItems.filter(item => item.id !== id)
-    }));
+    const updatedContent = {
+      ...content,
+      galleryItems: content.galleryItems.filter(item => item.id !== id)
+    };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   const addAdministration = (admin: Omit<ContentContextType['content']['administration'][0], 'id'>) => {
@@ -631,19 +679,23 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       return;
     }
     const newAdmin = { ...admin, id: Date.now().toString() };
-    setContent(prev => ({
-      ...prev,
-      administration: [...prev.administration, newAdmin]
-    }));
+    const updatedContent = {
+      ...content,
+      administration: [...content.administration, newAdmin]
+    };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   const updateAdministration = (id: string, updatedAdmin: Partial<ContentContextType['content']['administration'][0]>) => {
-    setContent(prev => ({
-      ...prev,
-      administration: prev.administration.map(admin => 
+    const updatedContent = {
+      ...content,
+      administration: content.administration.map(admin => 
         admin.id === id ? { ...admin, ...updatedAdmin } : admin
       )
-    }));
+    };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   const deleteAdministration = (id: string) => {
@@ -651,10 +703,12 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       alert('Minimum 3 administration members required');
       return;
     }
-    setContent(prev => ({
-      ...prev,
-      administration: prev.administration.filter(admin => admin.id !== id)
-    }));
+    const updatedContent = {
+      ...content,
+      administration: content.administration.filter(admin => admin.id !== id)
+    };
+    setContent(updatedContent);
+    saveToStorage(updatedContent);
   };
 
   return (
