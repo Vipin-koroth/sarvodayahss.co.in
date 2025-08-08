@@ -33,12 +33,12 @@ const HomePage = () => {
         {/* Background Media */}
         {content.heroVideo ? (
           <div className="absolute inset-0">
-            {content.heroVideo.includes('drive.google.com') ? (
+            {content.heroVideo.includes('drive.google.com') && content.heroVideo.includes('/file/d/') ? (
               <iframe
-                src={content.heroVideo.replace('/view', '/preview')}
+                src={`https://drive.google.com/file/d/${content.heroVideo.split('/file/d/')[1].split('/')[0]}/preview`}
                 className="w-full h-full object-cover scale-105"
                 frameBorder="0"
-                allow="autoplay; encrypted-media"
+                allow="autoplay; encrypted-media; fullscreen"
                 allowFullScreen
               ></iframe>
             ) : (

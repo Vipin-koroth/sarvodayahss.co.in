@@ -198,13 +198,13 @@ const AdminPanel = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Hero Video URL</label>
                 <input
                   type="url"
-                  value={content.heroVideoUrl}
-                  onChange={(e) => handleInputChange('heroVideoUrl', e.target.value)}
+                  value={content.heroVideo}
+                  onChange={(e) => handleInputChange('heroVideo', e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter video URL (YouTube, Vimeo, or Google Drive)"
+                  placeholder="https://drive.google.com/file/d/YOUR_FILE_ID/view"
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Supports YouTube, Vimeo, Google Drive, or direct video file URLs
+                  For Google Drive: Share video → Copy link → Paste here. Make sure video is set to "Anyone with the link can view"
                 </p>
               </div>
             </div>
