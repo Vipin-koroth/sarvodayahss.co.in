@@ -15,7 +15,7 @@ class GoogleDriveService {
   private config: GoogleDriveConfig;
   private isInitialized = false;
   private isSignedIn = false;
-  private hasValidConfig = false;
+  private _hasValidConfigInitialized = false;
 
   constructor() {
     this.config = {
@@ -25,20 +25,20 @@ class GoogleDriveService {
     };
     
     // Check if we have valid configuration
-    this.hasValidConfig = !!(this.config.apiKey && this.config.clientId);
+    this._hasValidConfigInitialized = !!(this.config.apiKey && this.config.clientId);
     
-    if (!this.hasValidConfig) {
+    if (!this._hasValidConfigInitialized) {
       console.warn('Google Drive API credentials not found in environment variables');
     }
   }
 
   hasValidConfig(): boolean {
-    return this.hasValidConfig;
+    return this._hasValidConfigInitialized;
   }
 
   async initialize(): Promise<boolean> {
     // Skip initialization if we don't have valid config
-    if (!this.hasValidConfig) {
+    if (!this._hasValidConfigInitialized) {
       console.warn('Google Drive API credentials not configured. Skipping initialization.');
       return false;
     }
@@ -95,7 +95,7 @@ class GoogleDriveService {
   }
 
   async signIn(): Promise<boolean> {
-    if (!this.hasValidConfig) {
+    if (!this._hasValidConfigInitialized) {
       console.error('Google Drive API credentials not configured. Please add VITE_GOOGLE_DRIVE_API_KEY and VITE_GOOGLE_DRIVE_CLIENT_ID to your .env file');
       return false;
     }
@@ -133,7 +133,7 @@ class GoogleDriveService {
   }
 
   isAuthenticated(): boolean {
-    return this.hasValidConfig && this.isSignedIn;
+    return this._hasValidConfigInitialized && this.isSignedIn;
   }
 
   async listFiles(): Promise<GoogleDriveFile[]> {
