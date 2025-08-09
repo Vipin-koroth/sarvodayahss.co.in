@@ -728,6 +728,89 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     saveToStorage(updatedContent);
   };
 
+  // Google Drive functions
+  const syncWithGoogleDrive = async (): Promise<boolean> => {
+    try {
+      if (!isGoogleDriveInitialized) {
+        console.error('Google Drive service not initialized');
+        return false;
+      }
+      
+      const success = await googleDriveService.syncData(content);
+      if (success) {
+        const driveData = await googleDriveService.loadData();
+        if (driveData) {
+          setContent(driveData);
+          saveToStorage(driveData);
+        }
+      }
+      return success;
+    } catch (error) {
+      console.error('Error syncing with Google Drive:', error);
+      return false;
+    }
+  };
+
+  const loadFromGoogleDrive = async (): Promise<boolean> => {
+    try {
+      if (!isGoogleDriveInitialized) {
+        console.error('Google Drive service not initialized');
+        return false;
+      }
+      
+      const driveData = await googleDriveService.loadData();
+      if (driveData) {
+        setContent(driveData);
+        saveToStorage(driveData);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error loading from Google Drive:', error);
+      return false;
+    }
+  };
+
+  const saveToGoogleDrive = async (): Promise<boolean> => {
+    try {
+      if (!isGoogleDriveInitialized) {
+        console.error('Google Drive service not initialized');
+        return false;
+      }
+      
+      return await googleDriveService.saveData(content);
+    } catch (error) {
+      console.error('Error saving to Google Drive:', error);
+      return false;
+    }
+  };
+
+  const isGoogleDriveConnected = (): boolean => {
+    return isGoogleDriveInitialized && googleDriveService.isAuthenticated();
+  };
+
+  const connectGoogleDrive = async (): Promise<boolean> => {
+    try {
+      const success = await googleDriveService.authenticate();
+      if (success) {
+        setIsGoogleDriveInitialized(true);
+      }
+      return success;
+    } catch (error) {
+      console.error('Error connecting to Google Drive:', error);
+      return false;
+    }
+  };
+
+  const disconnectGoogleDrive = async (): Promise<void> => {
+    try {
+      await googleDriveService.signOut();
+      setIsGoogleDriveInitialized(false);
+    } catch (error) {
+      console.error('Error disconnecting from Google Drive:', error);
+    }
+  };
+
   return (
     <ContentContext.Provider value={{ 
       content, 
