@@ -40,6 +40,12 @@ class GoogleDriveService {
               scope: 'https://www.googleapis.com/auth/drive.file'
             });
             
+            // Initialize Auth2 library
+            await window.gapi.auth2.init({
+              client_id: this.config.clientId,
+              scope: 'https://www.googleapis.com/auth/drive.file'
+            });
+            
             this.isInitialized = true;
             resolve();
           } catch (error) {
