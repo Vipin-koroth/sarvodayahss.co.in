@@ -599,13 +599,8 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   // Initialize Google Drive service on component mount
   React.useEffect(() => {
     const initGoogleDrive = async () => {
-      try {
-        const initialized = await googleDriveService.initialize();
-        setIsGoogleDriveInitialized(initialized);
-      } catch (error) {
-        console.warn('Google Drive initialization failed:', error);
-        setIsGoogleDriveInitialized(false);
-      }
+      const initialized = await googleDriveService.initialize();
+      setIsGoogleDriveInitialized(initialized);
     };
     initGoogleDrive();
   }, []);
@@ -741,7 +736,15 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         return false;
       }
       
-      return await saveToGoogleDrive();
+      const success = await googleDriveService.syncData(content);
+      if (success) {
+        const driveData = await googleDriveService.loadData();
+        if (driveData) {
+          setContent(driveData);
+          saveToStorage(driveData);
+        }
+      }
+      return success;
     } catch (error) {
       console.error('Error syncing with Google Drive:', error);
       return false;
@@ -755,7 +758,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         return false;
       }
       
-      const driveData = await googleDriveService.loadSchoolData();
+      const driveData = await googleDriveService.loadData();
       if (driveData) {
         setContent(driveData);
         saveToStorage(driveData);
@@ -775,7 +778,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         return false;
       }
       
-      return await googleDriveService.saveSchoolData(content);
+      return await googleDriveService.saveData(content);
     } catch (error) {
       console.error('Error saving to Google Drive:', error);
       return false;
@@ -788,35 +791,13 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
   const connectGoogleDrive = async (): Promise<boolean> => {
     try {
-      // Check if we have valid credentials first
-      if (!googleDriveService.hasValidConfig()) {
-        console.error('Google Drive API credentials not configured. Please add VITE_GOOGLE_DRIVE_API_KEY and VITE_GOOGLE_DRIVE_CLIENT_ID to your .env file');
-        return false;
-      }
-
-      // Initialize if not already done
-      if (!isGoogleDriveInitialized) {
-        console.log('Initializing Google Drive service...');
-        const initialized = await googleDriveService.initialize();
-        if (!initialized) {
-          console.error('Failed to initialize Google Drive service - check your API credentials');
-          return false;
-        }
-        setIsGoogleDriveInitialized(true);
-        console.log('Google Drive service initialized successfully');
-      }
-      
-      console.log('Attempting to sign in to Google Drive...');
-      const success = await googleDriveService.signIn();
+      const success = await googleDriveService.authenticate();
       if (success) {
-        console.log('Successfully signed in to Google Drive');
-        return true;
-      } else {
-        console.error('Google Drive sign-in failed - user may have cancelled or there was an authentication error');
-        return false;
+        setIsGoogleDriveInitialized(true);
       }
+      return success;
     } catch (error) {
-      console.error('Error connecting to Google Drive:', error.message || error);
+      console.error('Error connecting to Google Drive:', error);
       return false;
     }
   };

@@ -1,7 +1,6 @@
 interface GoogleDriveConfig {
   apiKey: string;
   clientId: string;
-  projectId: string;
   folderId: string;
 }
 
@@ -16,35 +15,16 @@ class GoogleDriveService {
   private config: GoogleDriveConfig;
   private isInitialized = false;
   private isSignedIn = false;
-  private _hasValidConfigInitialized = false;
 
   constructor() {
     this.config = {
       apiKey: import.meta.env.VITE_GOOGLE_DRIVE_API_KEY || '',
       clientId: import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID || '',
-      projectId: 'sarvodaya-web-468416',
       folderId: '18SXF-mHW0xR8is6M1CDen3NtAMmumSwZ' // Your shared folder ID
     };
-    
-    // Check if we have valid configuration
-    this._hasValidConfigInitialized = !!(this.config.apiKey && this.config.clientId);
-    
-    if (!this._hasValidConfigInitialized) {
-      console.warn('Google Drive API credentials not found in environment variables for project:', this.config.projectId);
-    }
-  }
-
-  hasValidConfig(): boolean {
-    return this._hasValidConfigInitialized;
   }
 
   async initialize(): Promise<boolean> {
-    // Skip initialization if we don't have valid config
-    if (!this._hasValidConfigInitialized) {
-      console.warn('Google Drive API credentials not configured. Skipping initialization.');
-      return false;
-    }
-    
     try {
       // Load Google API
       await this.loadGoogleAPI();
@@ -56,19 +36,12 @@ class GoogleDriveService {
             await window.gapi.client.init({
               apiKey: this.config.apiKey,
               clientId: this.config.clientId,
-              projectId: this.config.projectId,
               discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
               scope: 'https://www.googleapis.com/auth/drive.file'
             });
             
-            // Initialize Auth2 library
-            await window.gapi.auth2.init({
-              client_id: this.config.clientId,
-              project_id: this.config.projectId,
-              scope: 'https://www.googleapis.com/auth/drive.file'
-            });
-            
             this.isInitialized = true;
+            this.isSignedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get();
             resolve();
           } catch (error) {
             reject(error);
@@ -99,28 +72,15 @@ class GoogleDriveService {
   }
 
   async signIn(): Promise<boolean> {
-    if (!this._hasValidConfigInitialized) {
-      console.error('Google Drive API credentials not configured. Please add VITE_GOOGLE_DRIVE_API_KEY and VITE_GOOGLE_DRIVE_CLIENT_ID to your .env file');
-      return false;
-    }
-    
     if (!this.isInitialized) {
       const initialized = await this.initialize();
-      if (!initialized) {
-        console.error('Failed to initialize Google Drive API before sign-in');
-        return false;
-      }
+      if (!initialized) return false;
     }
 
     try {
       const authInstance = window.gapi.auth2.getAuthInstance();
-      if (!authInstance) {
-        console.error('Google Auth2 instance not available');
-        return false;
-      }
       await authInstance.signIn();
       this.isSignedIn = true;
-      console.log('Google Drive sign-in successful');
       return true;
     } catch (error) {
       console.error('Sign-in failed:', error);
@@ -137,7 +97,7 @@ class GoogleDriveService {
   }
 
   isAuthenticated(): boolean {
-    return this._hasValidConfigInitialized && this.isSignedIn;
+    return this.isSignedIn;
   }
 
   async listFiles(): Promise<GoogleDriveFile[]> {
