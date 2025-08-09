@@ -41,7 +41,6 @@ class GoogleDriveService {
             });
             
             this.isInitialized = true;
-            this.isSignedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get();
             resolve();
           } catch (error) {
             reject(error);

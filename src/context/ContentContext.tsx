@@ -736,15 +736,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         return false;
       }
       
-      const success = await googleDriveService.syncData(content);
-      if (success) {
-        const driveData = await googleDriveService.loadData();
-        if (driveData) {
-          setContent(driveData);
-          saveToStorage(driveData);
-        }
-      }
-      return success;
+      return await saveToGoogleDrive();
     } catch (error) {
       console.error('Error syncing with Google Drive:', error);
       return false;
@@ -758,7 +750,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         return false;
       }
       
-      const driveData = await googleDriveService.loadData();
+      const driveData = await googleDriveService.loadSchoolData();
       if (driveData) {
         setContent(driveData);
         saveToStorage(driveData);
@@ -778,7 +770,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
         return false;
       }
       
-      return await googleDriveService.saveData(content);
+      return await googleDriveService.saveSchoolData(content);
     } catch (error) {
       console.error('Error saving to Google Drive:', error);
       return false;
@@ -791,7 +783,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
   const connectGoogleDrive = async (): Promise<boolean> => {
     try {
-      const success = await googleDriveService.authenticate();
+      const success = await googleDriveService.signIn();
       if (success) {
         setIsGoogleDriveInitialized(true);
       }
