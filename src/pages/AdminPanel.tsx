@@ -84,17 +84,19 @@ const AdminPanel = () => {
   const handleConnectGoogleDrive = async () => {
     setDriveStatus('connecting');
     try {
+      console.log('Starting Google Drive connection process...');
       const success = await connectGoogleDrive();
       if (success) {
+        console.log('Google Drive connection successful');
         setDriveStatus('success');
         setTimeout(() => setDriveStatus('idle'), 3000);
       } else {
-        console.error('Google Drive connection failed');
+        console.error('Google Drive connection failed - check console for details');
         setDriveStatus('error');
         setTimeout(() => setDriveStatus('idle'), 3000);
       }
     } catch (error) {
-      console.error('Google Drive connection error:', error);
+      console.error('Google Drive connection error:', error.message || error);
       setDriveStatus('error');
       setTimeout(() => setDriveStatus('idle'), 3000);
     }
@@ -297,7 +299,13 @@ const AdminPanel = () => {
             {driveStatus === 'error' && (
               <div className="mt-4 p-3 bg-red-100 text-red-800 rounded-lg flex items-center">
                 <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
-                <span className="font-medium">Failed to sync with Google Drive. Please try again.</span>
+                <div>
+                  <span className="font-medium">Failed to connect to Google Drive.</span>
+                  <p className="text-sm mt-1">
+                    Please check that you have added your Google Drive API credentials to the .env file. 
+                    See the README.md for setup instructions.
+                  </p>
+                </div>
               </div>
             )}
             

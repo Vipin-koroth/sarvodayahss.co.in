@@ -26,6 +26,14 @@ class GoogleDriveService {
     
     // Check if we have valid configuration
     this.hasValidConfig = !!(this.config.apiKey && this.config.clientId);
+    
+    if (!this.hasValidConfig) {
+      console.warn('Google Drive API credentials not found in environment variables');
+    }
+  }
+
+  hasValidConfig(): boolean {
+    return this.hasValidConfig;
   }
 
   async initialize(): Promise<boolean> {

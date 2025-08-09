@@ -788,25 +788,35 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
   const connectGoogleDrive = async (): Promise<boolean> => {
     try {
+      // Check if we have valid credentials first
+      if (!googleDriveService.hasValidConfig()) {
+        console.error('Google Drive API credentials not configured. Please add VITE_GOOGLE_DRIVE_API_KEY and VITE_GOOGLE_DRIVE_CLIENT_ID to your .env file');
+        return false;
+      }
+
+      // Initialize if not already done
       if (!isGoogleDriveInitialized) {
+        console.log('Initializing Google Drive service...');
         const initialized = await googleDriveService.initialize();
         if (!initialized) {
-          console.error('Failed to initialize Google Drive service');
+          console.error('Failed to initialize Google Drive service - check your API credentials');
           return false;
         }
         setIsGoogleDriveInitialized(true);
+        console.log('Google Drive service initialized successfully');
       }
       
+      console.log('Attempting to sign in to Google Drive...');
       const success = await googleDriveService.signIn();
       if (success) {
-        console.log('Successfully connected to Google Drive');
+        console.log('Successfully signed in to Google Drive');
         return true;
       } else {
-        console.error('Google Drive sign-in failed');
+        console.error('Google Drive sign-in failed - user may have cancelled or there was an authentication error');
         return false;
       }
     } catch (error) {
-      console.error('Error connecting to Google Drive:', error);
+      console.error('Error connecting to Google Drive:', error.message || error);
       return false;
     }
   };
