@@ -788,11 +788,23 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
 
   const connectGoogleDrive = async (): Promise<boolean> => {
     try {
-      const success = await googleDriveService.signIn();
-      if (success) {
+      if (!isGoogleDriveInitialized) {
+        const initialized = await googleDriveService.initialize();
+        if (!initialized) {
+          console.error('Failed to initialize Google Drive service');
+          return false;
+        }
         setIsGoogleDriveInitialized(true);
       }
-      return success;
+      
+      const success = await googleDriveService.signIn();
+      if (success) {
+        console.log('Successfully connected to Google Drive');
+        return true;
+      } else {
+        console.error('Google Drive sign-in failed');
+        return false;
+      }
     } catch (error) {
       console.error('Error connecting to Google Drive:', error);
       return false;

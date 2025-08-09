@@ -89,10 +89,12 @@ const AdminPanel = () => {
         setDriveStatus('success');
         setTimeout(() => setDriveStatus('idle'), 3000);
       } else {
+        console.error('Google Drive connection failed');
         setDriveStatus('error');
         setTimeout(() => setDriveStatus('idle'), 3000);
       }
     } catch (error) {
+      console.error('Google Drive connection error:', error);
       setDriveStatus('error');
       setTimeout(() => setDriveStatus('idle'), 3000);
     }

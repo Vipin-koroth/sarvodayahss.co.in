@@ -88,19 +88,27 @@ class GoogleDriveService {
 
   async signIn(): Promise<boolean> {
     if (!this.hasValidConfig) {
-      console.warn('Google Drive API credentials not configured');
+      console.error('Google Drive API credentials not configured. Please add VITE_GOOGLE_DRIVE_API_KEY and VITE_GOOGLE_DRIVE_CLIENT_ID to your .env file');
       return false;
     }
     
     if (!this.isInitialized) {
       const initialized = await this.initialize();
-      if (!initialized) return false;
+      if (!initialized) {
+        console.error('Failed to initialize Google Drive API before sign-in');
+        return false;
+      }
     }
 
     try {
       const authInstance = window.gapi.auth2.getAuthInstance();
+      if (!authInstance) {
+        console.error('Google Auth2 instance not available');
+        return false;
+      }
       await authInstance.signIn();
       this.isSignedIn = true;
+      console.log('Google Drive sign-in successful');
       return true;
     } catch (error) {
       console.error('Sign-in failed:', error);
