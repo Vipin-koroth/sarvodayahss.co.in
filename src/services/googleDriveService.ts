@@ -15,6 +15,7 @@ class GoogleDriveService {
   private config: GoogleDriveConfig;
   private isInitialized = false;
   private isSignedIn = false;
+  private hasValidConfig = false;
 
   constructor() {
     this.config = {
@@ -22,9 +23,18 @@ class GoogleDriveService {
       clientId: import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID || '',
       folderId: '18SXF-mHW0xR8is6M1CDen3NtAMmumSwZ' // Your shared folder ID
     };
+    
+    // Check if we have valid configuration
+    this.hasValidConfig = !!(this.config.apiKey && this.config.clientId);
   }
 
   async initialize(): Promise<boolean> {
+    // Skip initialization if we don't have valid config
+    if (!this.hasValidConfig) {
+      console.warn('Google Drive API credentials not configured. Skipping initialization.');
+      return false;
+    }
+    
     try {
       // Load Google API
       await this.loadGoogleAPI();
@@ -77,6 +87,11 @@ class GoogleDriveService {
   }
 
   async signIn(): Promise<boolean> {
+    if (!this.hasValidConfig) {
+      console.warn('Google Drive API credentials not configured');
+      return false;
+    }
+    
     if (!this.isInitialized) {
       const initialized = await this.initialize();
       if (!initialized) return false;
@@ -102,7 +117,7 @@ class GoogleDriveService {
   }
 
   isAuthenticated(): boolean {
-    return this.isSignedIn;
+    return this.hasValidConfig && this.isSignedIn;
   }
 
   async listFiles(): Promise<GoogleDriveFile[]> {

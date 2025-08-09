@@ -599,8 +599,13 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
   // Initialize Google Drive service on component mount
   React.useEffect(() => {
     const initGoogleDrive = async () => {
-      const initialized = await googleDriveService.initialize();
-      setIsGoogleDriveInitialized(initialized);
+      try {
+        const initialized = await googleDriveService.initialize();
+        setIsGoogleDriveInitialized(initialized);
+      } catch (error) {
+        console.warn('Google Drive initialization failed:', error);
+        setIsGoogleDriveInitialized(false);
+      }
     };
     initGoogleDrive();
   }, []);
