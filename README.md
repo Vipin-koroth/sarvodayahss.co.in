@@ -6,7 +6,7 @@ This application integrates with Google Drive for data storage. To set up:
 
 ### 1. Google Cloud Console Setup
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing one
+2. Select project: sarvodaya-web-468416
 3. Enable the Google Drive API
 4. Create credentials:
    - API Key (for Drive API access)

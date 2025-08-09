@@ -1,6 +1,7 @@
 interface GoogleDriveConfig {
   apiKey: string;
   clientId: string;
+  projectId: string;
   folderId: string;
 }
 
@@ -21,6 +22,7 @@ class GoogleDriveService {
     this.config = {
       apiKey: import.meta.env.VITE_GOOGLE_DRIVE_API_KEY || '',
       clientId: import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID || '',
+      projectId: 'sarvodaya-web-468416',
       folderId: '18SXF-mHW0xR8is6M1CDen3NtAMmumSwZ' // Your shared folder ID
     };
     
@@ -28,7 +30,7 @@ class GoogleDriveService {
     this._hasValidConfigInitialized = !!(this.config.apiKey && this.config.clientId);
     
     if (!this._hasValidConfigInitialized) {
-      console.warn('Google Drive API credentials not found in environment variables');
+      console.warn('Google Drive API credentials not found in environment variables for project:', this.config.projectId);
     }
   }
 
@@ -54,6 +56,7 @@ class GoogleDriveService {
             await window.gapi.client.init({
               apiKey: this.config.apiKey,
               clientId: this.config.clientId,
+              projectId: this.config.projectId,
               discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
               scope: 'https://www.googleapis.com/auth/drive.file'
             });
@@ -61,6 +64,7 @@ class GoogleDriveService {
             // Initialize Auth2 library
             await window.gapi.auth2.init({
               client_id: this.config.clientId,
+              project_id: this.config.projectId,
               scope: 'https://www.googleapis.com/auth/drive.file'
             });
             
